@@ -63,13 +63,13 @@
             <strong data-session-name></strong>
             <span data-session-role></span>
           </span>
-          <button class="notification-button" type="button" aria-label="Notificaciones" data-notifications>
+          <button class="notification-button" type="button" aria-label="Notificaciones" aria-controls="notifications-panel" aria-expanded="false" data-notifications>
             <span class="notification-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
             </span>
             <span class="notification-count" data-notification-count hidden></span>
           </button>
-          <div class="notifications-panel" data-notifications-panel hidden>
+          <div class="notifications-panel" id="notifications-panel" role="region" aria-label="Notificaciones" data-notifications-panel hidden>
             <h2>Notificaciones</h2>
             <p class="notifications-empty" data-notifications-empty hidden>No tiene notificaciones nuevas.</p>
             <ul class="notifications-list" data-notifications-list></ul>
@@ -93,6 +93,7 @@
     class="accessibility-panel"
     id="plc-accessibility-panel"
     aria-labelledby="accessibility-title"
+    role="region"
     data-accessibility-panel
     hidden
   >

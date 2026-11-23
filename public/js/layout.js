@@ -98,18 +98,40 @@ function prepararAccesibilidad() {
 
   aplicarContraste(contrasteGuardado, false);
 
+  function posicionarPanel() {
+    const rectangulo = botonAbrir.getBoundingClientRect();
+    const encabezado = document.querySelector('.municipal-header');
+    const rectanguloEncabezado = encabezado
+      ? encabezado.getBoundingClientRect()
+      : { top: 0, right: window.innerWidth };
+    const margen = 8;
+    panel.style.top = `${rectangulo.bottom - rectanguloEncabezado.top + margen}px`;
+    panel.style.right = `${Math.max(margen, rectanguloEncabezado.right - rectangulo.right)}px`;
+  }
+
+  function cerrarAccesibilidad(devolverFoco) {
+    panel.hidden = true;
+    botonAbrir.setAttribute('aria-expanded', 'false');
+    botonAbrir.setAttribute('aria-label', 'Abrir opciones de accesibilidad');
+    if (devolverFoco) {
+      botonAbrir.focus();
+    }
+  }
+
   botonAbrir.addEventListener('click', () => {
     const estaAbierto = botonAbrir.getAttribute('aria-expanded') === 'true';
-    botonAbrir.setAttribute('aria-expanded', String(!estaAbierto));
-    botonAbrir.setAttribute(
-      'aria-label',
-      estaAbierto ? 'Abrir opciones de accesibilidad' : 'Cerrar opciones de accesibilidad'
-    );
-    panel.hidden = estaAbierto;
-
-    if (!estaAbierto) {
-      panel.querySelector('[data-font-action="decrease"]').focus();
+    if (estaAbierto) {
+      cerrarAccesibilidad(true);
+      return;
     }
+
+    botonAbrir.setAttribute('aria-expanded', 'true');
+    botonAbrir.setAttribute('aria-label', 'Cerrar opciones de accesibilidad');
+    posicionarPanel();
+    panel.hidden = false;
+    window.requestAnimationFrame(() => {
+      panel.querySelector('[data-font-action="decrease"]').focus();
+    });
   });
 
   panel.addEventListener('click', (evento) => {
@@ -138,10 +160,19 @@ function prepararAccesibilidad() {
 
   document.addEventListener('keydown', (evento) => {
     if (evento.key === 'Escape' && !panel.hidden) {
-      panel.hidden = true;
-      botonAbrir.setAttribute('aria-expanded', 'false');
-      botonAbrir.setAttribute('aria-label', 'Abrir opciones de accesibilidad');
-      botonAbrir.focus();
+      cerrarAccesibilidad(true);
+    }
+  });
+
+  document.addEventListener('pointerdown', (evento) => {
+    if (!panel.hidden && !panel.contains(evento.target) && !botonAbrir.contains(evento.target)) {
+      cerrarAccesibilidad(false);
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if (!panel.hidden) {
+      posicionarPanel();
     }
   });
 }

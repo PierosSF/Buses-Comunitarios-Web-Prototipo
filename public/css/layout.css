@@ -178,6 +178,25 @@ main {
   padding-block: 0.5rem;
 }
 
+.topbar-inner > nav {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.top-links {
+  flex-wrap: nowrap;
+  gap: 0.25rem 0.625rem;
+}
+
+.top-links a {
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.top-link-note {
+  display: none;
+}
+
 .top-links,
 .utility-links,
 .session-area,
@@ -384,7 +403,7 @@ main {
 }
 
 .accessibility-panel {
-  position: fixed;
+  position: absolute;
   z-index: 10;
   top: 1rem;
   right: 1rem;
@@ -621,13 +640,14 @@ main {
   color: #ffffff;
   font-size: 0.9375rem;
   overflow-wrap: anywhere;
-  text-decoration: underline;
-  text-decoration-color: var(--plc-celeste);
-  text-underline-offset: 0.2rem;
+  text-decoration: none;
 }
 
 .footer-link-columns a:hover {
   color: #b7f4ff;
+  text-decoration: underline;
+  text-decoration-thickness: 0.0625rem;
+  text-underline-offset: 0.2rem;
 }
 
 .footer-contact {
@@ -675,8 +695,12 @@ main {
 
 .footer-brand-contact a {
   color: #ffffff;
+  text-decoration: none;
+}
+
+.footer-brand-contact a:hover {
   text-decoration: underline;
-  text-decoration-color: var(--plc-celeste);
+  text-decoration-thickness: 0.0625rem;
   text-underline-offset: 0.2rem;
 }
 
@@ -2076,6 +2100,58 @@ main {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  main,
+  .admin-page,
+  .login-page {
+    width: calc(100% - 1rem);
+  }
+
+  .topbar-inner {
+    width: calc(100% - 1rem);
+  }
+
+  .top-links {
+    width: 100%;
+  }
+
+  .utility-links {
+    width: 100%;
+  }
+
+  .utility-links a,
+  .session-area {
+    max-width: 100%;
+  }
+
+  .session-person {
+    max-width: 10rem;
+  }
+
+  .notifications-panel,
+  .accessibility-panel {
+    right: 0.5rem;
+    width: calc(100vw - 1rem);
+  }
+
+  .calendar-week-nav,
+  .calendar-week-buttons {
+    align-items: stretch;
+  }
+
+  .calendar-week-buttons {
+    width: 100%;
+  }
+
+  .calendar-week-buttons > * {
+    flex: 1 1 100%;
+  }
+
+  .table-responsive,
+  .calendar-pending-scroll {
+    width: 100%;
+    max-width: 100%;
+  }
+
   .form-actions,
   .request-card-actions {
     align-items: stretch;
@@ -2102,6 +2178,14 @@ main {
 }
 
 @media print {
+  .decree-document,
+  .decree-review,
+  .table-responsive,
+  .admin-table,
+  .request-timeline {
+    break-inside: avoid;
+  }
+
   body.printing-decree {
     background: #ffffff;
     color: #000000;
