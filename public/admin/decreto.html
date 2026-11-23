@@ -7,13 +7,111 @@
   <link rel="stylesheet" href="/css/base.css">
   <link rel="stylesheet" href="/css/layout.css">
   <script src="/js/api.js" defer></script>
+  <script src="/js/rut.js" defer></script>
   <script src="/js/layout.js" defer></script>
   <script src="/js/guard.js" defer></script>
+  <script src="/js/admin-decreto.js" defer></script>
 </head>
 <body id="top" data-nav-active="servicios" data-required-role="administrador">
   <div data-layout-header aria-busy="true"></div>
-  <main id="contenido-principal" tabindex="-1">
-    <h1>Detalle de decreto</h1>
+  <main id="contenido-principal" class="admin-page" tabindex="-1">
+    <div class="page-heading">
+      <div>
+        <p class="eyebrow">Administración municipal</p>
+        <h1 data-decree-heading>Detalle del decreto</h1>
+        <p>Revise los antecedentes y el resultado automático del expediente.</p>
+      </div>
+      <a class="button-secondary" href="/admin/decretos.html">Volver a decretos</a>
+    </div>
+
+    <p class="admin-message" data-detail-message role="status" aria-live="polite">
+      Cargando el expediente...
+    </p>
+
+    <div class="decree-workspace" data-decree-workspace hidden>
+      <article class="decree-document" aria-labelledby="document-heading">
+        <header class="decree-document-header">
+          <p class="municipal-document-name">Municipalidad de Padre Las Casas</p>
+          <p>ADMINISTRACIÓN MUNICIPAL</p>
+          <h2 id="document-heading">Decreto de Circulación de Vehículos</h2>
+          <p data-decree-number class="decree-number"></p>
+        </header>
+
+        <p class="demo-signature-note">
+          Firma digital de demostración. Este documento no tiene validez legal.
+        </p>
+
+        <section class="decree-body" aria-label="Texto del decreto">
+          <p>
+            VISTOS: Lo dispuesto en el Decreto Ley N° 799 y los antecedentes
+            presentados para la solicitud de transporte comunitario.
+          </p>
+          <p>
+            RESUELVO: Autorícese la circulación del vehículo municipal indicado
+            para el traslado de la organización solicitante, en la fecha y
+            destino que se señalan:
+          </p>
+          <dl class="decree-data" data-decree-data></dl>
+        </section>
+
+        <section class="decree-passengers" aria-labelledby="passengers-heading">
+          <h3 id="passengers-heading">Nómina de pasajeros</h3>
+          <div class="table-responsive">
+            <table class="admin-table">
+              <caption>Personas incluidas en la autorización</caption>
+              <thead>
+                <tr>
+                  <th scope="col">N.º</th>
+                  <th scope="col">Nombre completo</th>
+                  <th scope="col">RUT</th>
+                  <th scope="col">Revisión</th>
+                </tr>
+              </thead>
+              <tbody data-passengers-body></tbody>
+            </table>
+          </div>
+        </section>
+
+        <footer class="decree-signature" data-signature-details hidden>
+          <p>Documento firmado electrónicamente para efectos de esta demostración.</p>
+          <dl>
+            <div><dt>Firmante</dt><dd data-signatory></dd></div>
+            <div><dt>Fecha de firma</dt><dd data-signature-date></dd></div>
+            <div class="signature-hash-row"><dt>Hash SHA-256</dt><dd data-signature-hash></dd></div>
+          </dl>
+        </footer>
+      </article>
+
+      <aside class="decree-review admin-card" aria-labelledby="review-heading">
+        <h2 id="review-heading">Revisión del expediente</h2>
+        <p class="review-state" data-review-state></p>
+        <p class="review-warning" data-deadline-warning role="alert" hidden></p>
+        <ul class="review-checklist" data-review-checks></ul>
+        <p class="review-observation" data-existing-observation hidden></p>
+
+        <div class="decree-actions" data-decree-actions hidden>
+          <button class="button-primary" type="button" data-sign-action>
+            Firmar y emitir
+          </button>
+          <form data-return-form>
+            <div class="form-field">
+              <label for="return-observation">Observación para DIDECO</label>
+              <textarea id="return-observation" rows="4" maxlength="2000"
+                data-return-observation aria-describedby="return-help"></textarea>
+              <span class="form-help" id="return-help">
+                Indique qué debe revisar o corregir DIDECO.
+              </span>
+            </div>
+            <button class="button-secondary" type="submit" data-return-action>
+              Devolver a DIDECO
+            </button>
+          </form>
+        </div>
+        <button class="button-secondary print-button" type="button" data-print-action>
+          Imprimir decreto
+        </button>
+      </aside>
+    </div>
   </main>
   <div data-layout-footer aria-busy="true"></div>
 </body>

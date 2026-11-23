@@ -52,6 +52,13 @@ CREATE TABLE IF NOT EXISTS secuencias_folios (
   PRIMARY KEY (anio)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Contador anual para emitir decretos de circulación sin duplicar números.
+CREATE TABLE IF NOT EXISTS secuencias_decretos (
+  anio SMALLINT UNSIGNED NOT NULL,
+  ultimo INT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (anio)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS solicitudes (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   folio VARCHAR(9) NOT NULL,

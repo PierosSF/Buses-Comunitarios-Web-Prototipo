@@ -688,10 +688,13 @@ router.post('/solicitudes/:id/asignar-bus', async (req, res, next) => {
       }
 
       const [decretos] = await conexion.execute(
-        `SELECT id FROM decretos WHERE solicitud_id = ? FOR UPDATE`,
+        `SELECT id, estado
+         FROM decretos
+         WHERE solicitud_id = ?
+         FOR UPDATE`,
         [id]
       );
-      if (decretos.length > 0) {
+      if (decretos.length > 0 && decretos[0].estado !== 'devuelto') {
         throw crearError(409, 'La solicitud ya tiene un decreto asociado. Revise su estado antes de continuar.');
       }
       const [organizaciones] = await conexion.execute(
@@ -720,11 +723,22 @@ router.post('/solicitudes/:id/asignar-bus', async (req, res, next) => {
         }))
       };
 
-      await conexion.execute(
-        `INSERT INTO decretos (solicitud_id, contenido, estado)
-         VALUES (?, ?, 'pendiente')`,
-        [id, JSON.stringify(contenido)]
-      );
+      if (decretos.length > 0) {
+        await conexion.execute(
+          `UPDATE decretos
+           SET contenido = ?, estado = 'pendiente', numero = NULL,
+               firmante_id = NULL, firmado_at = NULL, hash_firma = NULL,
+               observacion = NULL
+           WHERE id = ?`,
+          [JSON.stringify(contenido), decretos[0].id]
+        );
+      } else {
+        await conexion.execute(
+          `INSERT INTO decretos (solicitud_id, contenido, estado)
+           VALUES (?, ?, 'pendiente')`,
+          [id, JSON.stringify(contenido)]
+        );
+      }
       await conexion.execute(
         `UPDATE solicitudes
          SET bus_id = ?, estado = 'bus_asignado', observacion_dideco = NULL

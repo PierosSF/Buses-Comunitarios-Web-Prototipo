@@ -9,11 +9,61 @@
   <script src="/js/api.js" defer></script>
   <script src="/js/layout.js" defer></script>
   <script src="/js/guard.js" defer></script>
+  <script src="/js/admin-decretos.js" defer></script>
 </head>
 <body id="top" data-nav-active="servicios" data-required-role="administrador">
   <div data-layout-header aria-busy="true"></div>
-  <main id="contenido-principal" tabindex="-1">
-    <h1>Decretos por visar</h1>
+  <main id="contenido-principal" class="admin-page" tabindex="-1">
+    <div class="page-heading">
+      <div>
+        <p class="eyebrow">Administración municipal</p>
+        <h1>Decretos por visar</h1>
+        <p>Revise el expediente antes de firmar o devolver el decreto.</p>
+      </div>
+    </div>
+
+    <p class="admin-message" data-list-message role="status" aria-live="polite">
+      Cargando decretos...
+    </p>
+
+    <section class="admin-card" aria-labelledby="decrees-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="decrees-heading">Bandeja de decretos</h2>
+          <p>La firma de este prototipo es una demostración y no tiene validez legal.</p>
+        </div>
+      </div>
+
+      <form class="admin-filter-form" data-filter-form>
+        <div class="form-field">
+          <label for="decree-state">Estado</label>
+          <select id="decree-state" data-filter-state>
+            <option value="pendiente">Pendientes por visar</option>
+            <option value="firmado">Firmados</option>
+            <option value="devuelto">Devueltos</option>
+          </select>
+        </div>
+        <button class="button-primary" type="submit">Buscar decretos</button>
+      </form>
+
+      <div class="table-responsive" role="region" aria-label="Decretos por revisar" tabindex="0">
+        <table class="admin-table">
+          <caption>Decretos y solicitudes asignadas</caption>
+          <thead>
+            <tr>
+              <th scope="col">Folio</th>
+              <th scope="col">Organización y solicitante</th>
+              <th scope="col">Destino</th>
+              <th scope="col">Salida</th>
+              <th scope="col">Vehículo</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Revisión</th>
+            </tr>
+          </thead>
+          <tbody data-decrees-body></tbody>
+        </table>
+      </div>
+    </section>
   </main>
   <div data-layout-footer aria-busy="true"></div>
 </body>

@@ -62,7 +62,15 @@ VALUES
      'destino', 'Temuco',
      'fecha_salida', DATE_FORMAT(CURDATE() + INTERVAL 10 DAY, '%Y-%m-%d')
    ),
-   'firmado', 4, NOW(), 'FIRMA-DEMO-SIN-VALIDEZ-00377', NULL),
+   'firmado', 4, NOW(),
+   SHA2(CONCAT(
+     '{"contenido":{"destino":"Temuco","fecha_salida":"',
+     DATE_FORMAT(CURDATE() + INTERVAL 10 DAY, '%Y-%m-%d'),
+     '","folio":"2026-0377"},"firmante":"Jorge Paillalef","fecha":"',
+     DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'),
+     '"}'
+   ), 256),
+   NULL),
   (2, 2, NULL,
    JSON_OBJECT(
      'folio', '2026-0409',

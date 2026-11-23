@@ -79,4 +79,12 @@ Inicie sesión con `99999982-4` y la clave `Demo1234`. En **Solicitudes recibida
 
 En **Calendario de flota**, avance a la semana que contiene las solicitudes de demostración, creadas para `CURDATE() + INTERVAL 10 DAY`. Los folios `2026-0412` y `2026-0415` compiten por esa fecha: los buses 1 y 2 ya están ocupados, por lo que solo queda libre el bus 3. El calendario resalta el choque y muestra la sugerencia. Puede ver el conflicto sin asignar un bus; no es necesario recrear la base.
 
-La columna `estado` agrega el valor `devuelta`. Si su base ya existía, vuelva a ejecutar `database/schema.sql` para aplicar la ampliación del ENUM; la operación conserva los registros.
+La columna `estado` agrega el valor `devuelta`. Si su base ya existía, vuelva a ejecutar `database/schema.sql` para aplicar la ampliación del ENUM y crear la secuencia anual de decretos; la operación conserva los registros.
+
+## Módulo del Administrador Municipal
+
+Inicie sesión con `99999983-2` y la clave `Demo1234`. En **Decretos por visar** encontrará el decreto pendiente de la solicitud `2026-0409`. Abra el expediente para revisar los RUT, la capacidad y disponibilidad del bus, el motivo y el plazo antes de la salida.
+
+El botón **Firmar y emitir** solicita confirmación y genera un número correlativo `DCV N° n/AAAA`, registra al firmante, la fecha y un hash SHA-256 del contenido, el firmante y la fecha. La firma de este prototipo es simulada y no tiene validez legal. Puede imprimir el documento firmado; el hash y la fecha de firma aparecen al pie.
+
+Para devolver un decreto, escriba una observación obligatoria. La solicitud volverá a revisión de DIDECO, se liberará el bus y DIDECO podrá asignarlo nuevamente. Si ya tenía una base creada, importe otra vez `database/schema.sql` para agregar `secuencias_decretos`; no es necesario recrear ni sembrar la base.
