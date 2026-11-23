@@ -1,0 +1,52 @@
+CONTEXTO DEL PROYECTO
+Plataforma web de gestión de buses comunitarios, Municipalidad de Padre Las Casas
+Asignatura: Proyectos Colaborativos de Innovación Regional (Santo Tomás IP, Ingeniería en Informática)
+
+1. PROBLEMA
+Hoy el trámite es manual y en papel. Las organizaciones sociales entregan en la OIRS un formulario impreso con una nómina manuscrita de hasta 36 pasajeros (nombre, RUT y firma). Funcionarios de DIDECO transcriben los datos a una planilla Excel (CALENDARIO BUSES 2026, más de 500 registros anuales) y el Decreto de Circulación de Vehículos (DCV), exigido por el Decreto Ley N° 799 sobre uso de vehículos fiscales, se tramita en papel y muchas veces se firma horas antes de la salida.
+Consecuencias:
+- Respuesta de 15 a 21 días y sin seguimiento: el dirigente debe consultar en persona.
+- RUTs escritos a mano sin validar; choques de fecha y dobles reservas de la flota.
+- Riesgo ante Contraloría si un viaje sale sin decreto a tiempo.
+
+2. SOLUCIÓN
+Plataforma web con tres partes:
+a) Portal del dirigente: postula en línea, ingresa la nómina con validación de RUT al instante y sigue el estado de su solicitud.
+b) Panel de DIDECO: bandeja de solicitudes y calendario de flota que evita choques de fecha.
+c) Módulo del Administrador Municipal: revisa el expediente, genera el DCV y lo firma digitalmente.
+Metas: respuesta en máximo 5 días hábiles; 0% de RUT erróneos en decretos emitidos; 100% de decretos firmados con más de 48 horas de anticipación; satisfacción 4,5/5 o más.
+
+3. USUARIOS (tres perfiles)
+- Dirigente de organización social (externo; poca experiencia digital; apoyo de OIRS). Crea solicitudes, ingresa nómina, hace seguimiento, descarga la autorización.
+- Funcionario DIDECO (interno). Recibe y evalúa solicitudes, asigna bus y fecha sin choques, devuelve o rechaza con observación.
+- Administrador Municipal (interno). Revisa el expediente, firma o devuelve el decreto.
+Otros actores (no usan el sistema en este prototipo): conductores, OIRS, Informática municipal, Contraloría.
+
+4. ESTADOS DE UNA SOLICITUD
+borrador -> enviada -> en_revision -> bus_asignado (decreto pendiente de firma) -> decreto_firmado
+Salidas alternativas: rechazada (por DIDECO, con motivo); devuelta del Administrador a DIDECO (vuelve a en_revision).
+Barra de avance que ve el dirigente: Enviada / Nómina validada / Revisión DIDECO / Bus asignado / Decreto firmado.
+
+5. DATOS QUE INGRESA EL DIRIGENTE
+Destino, fecha de salida, hora de salida y de regreso, motivo del viaje (recreativa para adultos mayores, deportiva, cultural o educativa) y la nómina: nombre completo y RUT de cada pasajero. La organización sale de su cuenta. El bus, la patente, el conductor y el número de decreto los asigna DIDECO o el sistema.
+
+6. MODELO DE DATOS (MySQL)
+usuarios(id, rut UNIQUE, nombre, email, password_hash, rol ENUM('dirigente','dideco','administrador'), organizacion_id NULL, activo)
+organizaciones(id, nombre, tipo, sector)
+buses(id, nombre, patente, asientos, activo)
+solicitudes(id, folio UNIQUE 'AAAA-NNNN', organizacion_id, dirigente_id, destino, fecha_salida DATE, hora_salida TIME, hora_regreso TIME, motivo, estado, bus_id NULL, observacion_dideco, created_at, updated_at)
+pasajeros(id, solicitud_id, nombre, rut, UNIQUE(solicitud_id, rut))
+decretos(id, solicitud_id UNIQUE, numero NULL, contenido JSON, estado ENUM('pendiente','firmado','devuelto'), firmante_id NULL, firmado_at NULL, hash_firma NULL, observacion NULL)
+historial_estados(id, solicitud_id, estado_anterior, estado_nuevo, usuario_id, comentario, created_at)
+notificaciones(id, usuario_id, solicitud_id NULL, mensaje, canal ENUM('app','correo_simulado'), leida, created_at)
+
+7. PANTALLAS (existe un prototipo visual en docs/prototipo-original, usarlo como referencia de contenido y distribución)
+Dirigente: Mis solicitudes (tarjetas con barra de avance) / Nueva solicitud (datos del viaje + tabla de pasajeros con validación de RUT, contador "31 de 36 cupos") / Detalle de solicitud.
+DIDECO: Solicitudes recibidas (indicadores + tabla) / Calendario de flota (semana, un bus por fila, choque resaltado) / Detalle de solicitud (asignar bus, devolver, rechazar).
+Administrador: Decretos por visar / Detalle de decreto (documento DCV, revisión del expediente, observación, Firmar y emitir, Devolver).
+
+8. FUERA DE ALCANCE DE ESTE PROTOTIPO
+GPS y mantención de buses; integración con el Registro Civil u otros sistemas municipales; firma electrónica avanzada real; envío real de correos o SMS (se simulan); roles de conductor y OIRS; despliegue en internet.
+
+9. CUENTAS DE DEMOSTRACIÓN (clave común Demo1234; los RUT deben ser válidos por módulo 11)
+2 dirigentes de organizaciones distintas, 1 funcionario DIDECO, 1 Administrador Municipal. Todos los datos son ficticios.
