@@ -63,10 +63,10 @@ function crearTarjetaSolicitud(solicitud) {
   tarjeta.append(titulo, datos, window.SolicitudesUI.crearProgreso(solicitud.estado));
   acciones.className = 'request-card-actions';
 
-  if (solicitud.estado === 'borrador') {
+  if (solicitud.estado === 'borrador' || solicitud.estado === 'devuelta') {
     acciones.append(crearEnlaceSolicitud(
       `/dirigente/nueva-solicitud.html?id=${encodeURIComponent(solicitud.id)}`,
-      'Continuar borrador',
+      solicitud.estado === 'devuelta' ? 'Corregir solicitud' : 'Continuar borrador',
       'button-secondary'
     ));
   } else {

@@ -250,7 +250,12 @@ async function guardarBorrador(datos) {
     document.querySelector('[data-form-title]').textContent = 'Editar borrador';
   }
   mostrarEnlaceDetalle(solicitud);
-  mostrarMensajeSolicitud(`Borrador ${solicitud.folio} guardado correctamente.`, 'exito');
+  mostrarMensajeSolicitud(
+    solicitud.estado === 'devuelta'
+      ? `Las correcciones de la solicitud ${solicitud.folio} quedaron guardadas. Puede reenviarla cuando esté lista.`
+      : `Borrador ${solicitud.folio} guardado correctamente.`,
+    'exito'
+  );
   return solicitud;
 }
 
@@ -295,13 +300,22 @@ async function cargarBorrador(id) {
   }
 
   const datos = respuesta.data;
-  if (datos.solicitud.estado !== 'borrador') {
+  if (!['borrador', 'devuelta'].includes(datos.solicitud.estado)) {
     window.location.replace(`/dirigente/solicitud.html?id=${encodeURIComponent(id)}`);
     return false;
   }
 
   const solicitud = datos.solicitud;
-  document.querySelector('[data-form-title]').textContent = `Editar borrador ${solicitud.folio}`;
+  const esDevuelta = solicitud.estado === 'devuelta';
+  document.querySelector('[data-form-title]').textContent = esDevuelta
+    ? `Corregir solicitud ${solicitud.folio}`
+    : `Editar borrador ${solicitud.folio}`;
+  if (esDevuelta) {
+    document.querySelector('[data-form-description]').textContent =
+      'DIDECO devolvió esta solicitud para corregirla. Revise la observación y vuelva a enviarla.';
+    document.querySelector('[data-save-draft]').textContent = 'Guardar correcciones';
+    document.querySelector('[data-send-request]').textContent = 'Reenviar solicitud';
+  }
   document.querySelector('[name="destino"]').value = solicitud.destino || '';
   document.querySelector('[name="fecha_salida"]').value = solicitud.fecha_salida || '';
   document.querySelector('[name="hora_salida"]').value = solicitud.hora_salida
@@ -316,10 +330,19 @@ async function cargarBorrador(id) {
   tabla.replaceChildren();
   datos.pasajeros.forEach((pasajero) => crearFilaPasajero(pasajero, false));
   if (datos.pasajeros.length === 0) {
-    crearFilaPasajero(undefined, true);
+    crearFilaPasajero(undefined, false);
   }
   mostrarEnlaceDetalle(solicitud);
-  limpiarMensajeSolicitud();
+  if (esDevuelta) {
+    mostrarMensajeSolicitud(
+      solicitud.observacion_dideco
+        ? `Observación de DIDECO: ${solicitud.observacion_dideco}`
+        : 'DIDECO solicitó correcciones antes de continuar.',
+      'aviso'
+    );
+  } else {
+    limpiarMensajeSolicitud();
+  }
   return true;
 }
 

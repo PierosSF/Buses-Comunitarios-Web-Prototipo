@@ -24,8 +24,8 @@ Otros actores (no usan el sistema en este prototipo): conductores, OIRS, Inform�
 
 4. ESTADOS DE UNA SOLICITUD
 borrador -> enviada -> en_revision -> bus_asignado (decreto pendiente de firma) -> decreto_firmado
-Salidas alternativas: rechazada (por DIDECO, con motivo); devuelta del Administrador a DIDECO (vuelve a en_revision).
-Barra de avance que ve el dirigente: Enviada / Nómina validada / Revisión DIDECO / Bus asignado / Decreto firmado.
+Salidas alternativas: devuelta (DIDECO devuelve al dirigente para corregir y reenviar); rechazada (por DIDECO, con motivo); devuelta del Administrador a DIDECO (vuelve a en_revision).
+Barra de avance que ve el dirigente: Enviada / Nómina validada / Revisión DIDECO / Bus asignado / Decreto firmado. Una solicitud devuelta puede corregirse y reenviarse desde el portal.
 
 5. DATOS QUE INGRESA EL DIRIGENTE
 Destino, fecha de salida, hora de salida y de regreso, motivo del viaje (recreativa para adultos mayores, deportiva, cultural o educativa) y la nómina: nombre completo y RUT de cada pasajero. La organización sale de su cuenta. El bus, la patente, el conductor y el número de decreto los asigna DIDECO o el sistema.

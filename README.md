@@ -72,3 +72,11 @@ Con una cuenta de dirigente, abra **Nueva solicitud** para completar los datos d
 En cada tarjeta puede revisar el avance y abrir el detalle. Cuando el decreto esté firmado, el detalle permite imprimirlo o guardarlo como PDF desde el navegador.
 
 Si ya tenía una base creada antes de este módulo, ejecute `database/schema.sql` en phpMyAdmin para habilitar borradores incompletos y la secuencia de folios. Esta actualización no borra los registros; no ejecute `npm.cmd run seed` salvo que quiera recrear toda la base.
+
+## Módulo DIDECO
+
+Inicie sesión con `99999982-4` y la clave `Demo1234`. En **Solicitudes recibidas** puede filtrar por estado o buscar por folio, organización, dirigente o destino. Al abrir una solicitud enviada, pásela a revisión para habilitar la asignación del bus, devolución o rechazo. La devolución requiere un comentario y permite que el dirigente corrija y reenvíe la solicitud; el rechazo también requiere un comentario.
+
+En **Calendario de flota**, avance a la semana que contiene las solicitudes de demostración, creadas para `CURDATE() + INTERVAL 10 DAY`. Los folios `2026-0412` y `2026-0415` compiten por esa fecha: los buses 1 y 2 ya están ocupados, por lo que solo queda libre el bus 3. El calendario resalta el choque y muestra la sugerencia. Puede ver el conflicto sin asignar un bus; no es necesario recrear la base.
+
+La columna `estado` agrega el valor `devuelta`. Si su base ya existía, vuelva a ejecutar `database/schema.sql` para aplicar la ampliación del ENUM; la operación conserva los registros.

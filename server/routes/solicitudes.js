@@ -333,8 +333,8 @@ router.put('/:id', async (req, res, next) => {
       if (filas.length === 0) {
         throw crearError(404, 'No encontramos esa solicitud en su organización.');
       }
-      if (filas[0].estado !== 'borrador') {
-        throw crearError(409, 'Solo puede editar solicitudes que aún están en borrador.');
+      if (!['borrador', 'devuelta'].includes(filas[0].estado)) {
+        throw crearError(409, 'Solo puede editar borradores o solicitudes devueltas para corregir.');
       }
 
       await conexion.execute(
@@ -354,7 +354,7 @@ router.put('/:id', async (req, res, next) => {
       await conexion.execute('DELETE FROM pasajeros WHERE solicitud_id = ?', [id]);
       await insertarPasajeros(conexion, id, pasajeros);
 
-      return { id, folio: filas[0].folio, estado: 'borrador' };
+      return { id, folio: filas[0].folio, estado: filas[0].estado };
     });
 
     return res.json({ ok: true, data: solicitud });
@@ -378,8 +378,8 @@ router.post('/:id/enviar', async (req, res, next) => {
       if (filas.length === 0) {
         throw crearError(404, 'No encontramos esa solicitud en su organización.');
       }
-      if (filas[0].estado !== 'borrador') {
-        throw crearError(409, 'Solo puede enviar una solicitud que aún está en borrador.');
+      if (!['borrador', 'devuelta'].includes(filas[0].estado)) {
+        throw crearError(409, 'Solo puede enviar un borrador o una solicitud devuelta para corregir.');
       }
 
       const [filasPasajeros] = await conexion.execute(
@@ -399,15 +399,22 @@ router.post('/:id/enviar', async (req, res, next) => {
 
       await conexion.execute(
         `UPDATE solicitudes
-         SET estado = 'enviada'
-         WHERE id = ? AND organizacion_id = ? AND estado = 'borrador'`,
+         SET estado = 'enviada', observacion_dideco = NULL
+         WHERE id = ? AND organizacion_id = ? AND estado IN ('borrador', 'devuelta')`,
         [id, req.usuario.organizacion_id]
       );
       await conexion.execute(
         `INSERT INTO historial_estados
            (solicitud_id, estado_anterior, estado_nuevo, usuario_id, comentario)
-         VALUES (?, 'borrador', 'enviada', ?, ?)`,
-        [id, req.usuario.id, 'Solicitud enviada por la organización.']
+         VALUES (?, ?, 'enviada', ?, ?)`,
+        [
+          id,
+          filas[0].estado,
+          req.usuario.id,
+          filas[0].estado === 'devuelta'
+            ? 'La organización corrigió y reenvió la solicitud.'
+            : 'Solicitud enviada por la organización.'
+        ]
       );
 
       const [funcionarios] = await conexion.execute(

@@ -66,6 +66,7 @@ CREATE TABLE IF NOT EXISTS solicitudes (
     'borrador',
     'enviada',
     'en_revision',
+    'devuelta',
     'bus_asignado',
     'decreto_firmado',
     'rechazada'
@@ -161,3 +162,15 @@ ALTER TABLE solicitudes
 ALTER TABLE pasajeros
   MODIFY nombre VARCHAR(150) NULL,
   MODIFY rut VARCHAR(12) NULL;
+
+-- Permite que DIDECO devuelva una solicitud al dirigente para corregirla.
+ALTER TABLE solicitudes
+  MODIFY estado ENUM(
+    'borrador',
+    'enviada',
+    'en_revision',
+    'devuelta',
+    'bus_asignado',
+    'decreto_firmado',
+    'rechazada'
+  ) NOT NULL DEFAULT 'borrador';

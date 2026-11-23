@@ -9,11 +9,84 @@
   <script src="/js/api.js" defer></script>
   <script src="/js/layout.js" defer></script>
   <script src="/js/guard.js" defer></script>
+  <script src="/js/solicitudes-ui.js" defer></script>
+  <script src="/js/dideco-bandeja.js" defer></script>
 </head>
 <body id="top" data-nav-active="servicios" data-required-role="dideco">
   <div data-layout-header aria-busy="true"></div>
   <main id="contenido-principal" tabindex="-1">
-    <h1>Solicitudes recibidas</h1>
+    <div class="page-heading">
+      <div>
+        <h1>Solicitudes recibidas</h1>
+        <p>Revise las solicitudes de las organizaciones y gestione la disponibilidad de la flota.</p>
+      </div>
+      <a class="button-secondary" href="/dideco/calendario.html">Ver calendario de flota</a>
+    </div>
+
+    <section class="indicator-grid" aria-label="Indicadores de gestión">
+      <article class="indicator-card">
+        <h2>Por revisar</h2>
+        <span class="indicator-value" data-indicator="por_revisar">—</span>
+      </article>
+      <article class="indicator-card">
+        <h2>Tiempo medio de respuesta</h2>
+        <span class="indicator-value"><span data-indicator="tiempo_medio_respuesta_dias">—</span> días</span>
+      </article>
+      <article class="indicator-card is-warning">
+        <h2>Esperando decreto</h2>
+        <span class="indicator-value" data-indicator="esperando_decreto">—</span>
+      </article>
+      <article class="indicator-card is-conflict">
+        <h2>Choques de fecha</h2>
+        <span class="indicator-value" data-indicator="conflictos_fecha">—</span>
+      </article>
+    </section>
+
+    <p class="page-message" role="status" aria-live="polite" data-indicator-message hidden></p>
+
+    <form class="dideco-filters" data-filter-form>
+      <div class="form-field">
+        <label for="filtro-estado">Estado</label>
+        <select id="filtro-estado" name="estado" data-filter-state>
+          <option value="">Todos los estados</option>
+          <option value="enviada">Enviada</option>
+          <option value="en_revision">En revisión DIDECO</option>
+          <option value="devuelta">Devuelta para corregir</option>
+          <option value="bus_asignado">Bus asignado</option>
+          <option value="decreto_firmado">Decreto firmado</option>
+          <option value="rechazada">Rechazada</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label for="buscar-solicitud">Buscar por folio, organización, dirigente o destino</label>
+        <input id="buscar-solicitud" name="buscar" type="search" maxlength="100" data-filter-search>
+      </div>
+      <button class="button-primary" type="submit">Buscar solicitudes</button>
+    </form>
+
+    <p class="page-message" role="status" aria-live="polite" data-list-message>
+      Cargando solicitudes...
+    </p>
+    <div class="dideco-table-wrap">
+      <div class="table-responsive" role="region" aria-label="Tabla de solicitudes recibidas" tabindex="0">
+        <table class="dideco-table">
+          <caption>Solicitudes de las organizaciones</caption>
+          <thead>
+            <tr>
+              <th scope="col">Folio</th>
+              <th scope="col">Organización y dirigente</th>
+              <th scope="col">Destino</th>
+              <th scope="col">Fecha de salida</th>
+              <th scope="col">Pasajeros</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Bus</th>
+              <th scope="col">Acción</th>
+            </tr>
+          </thead>
+          <tbody data-requests-body></tbody>
+        </table>
+      </div>
+    </div>
   </main>
   <div data-layout-footer aria-busy="true"></div>
 </body>

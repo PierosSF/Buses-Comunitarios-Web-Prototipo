@@ -9,11 +9,50 @@
   <script src="/js/api.js" defer></script>
   <script src="/js/layout.js" defer></script>
   <script src="/js/guard.js" defer></script>
+  <script src="/js/solicitudes-ui.js" defer></script>
+  <script src="/js/dideco-calendario.js" defer></script>
 </head>
 <body id="top" data-nav-active="servicios" data-required-role="dideco">
   <div data-layout-header aria-busy="true"></div>
   <main id="contenido-principal" tabindex="-1">
-    <h1>Calendario de flota</h1>
+    <div class="page-heading">
+      <div>
+        <h1>Calendario de flota</h1>
+        <p>Consulte las reservas y solicitudes que todavía esperan un bus.</p>
+      </div>
+      <a class="button-secondary" href="/dideco/bandeja.html">Volver a solicitudes</a>
+    </div>
+
+    <nav class="calendar-week-nav" aria-label="Navegación por semana">
+      <div class="calendar-week-buttons">
+        <button class="button-secondary" type="button" data-week-previous>Semana anterior</button>
+        <button class="button-secondary" type="button" data-week-current>Semana actual</button>
+        <button class="button-secondary" type="button" data-week-next>Semana siguiente</button>
+      </div>
+      <h2 data-calendar-week>Semana seleccionada</h2>
+    </nav>
+
+    <p class="page-message" role="status" aria-live="polite" data-calendar-message>
+      Cargando el calendario...
+    </p>
+    <p class="page-message" role="status" aria-live="polite" data-conflict-summary hidden></p>
+
+    <section class="calendar-pending-section" aria-labelledby="calendar-pending-title">
+      <h2 id="calendar-pending-title">Solicitudes pendientes de bus</h2>
+      <div class="calendar-pending-scroll" role="region" aria-label="Solicitudes pendientes por día" tabindex="0">
+        <div class="calendar-pending-grid" data-pending-grid></div>
+      </div>
+    </section>
+
+    <section class="calendar-buses-section" aria-labelledby="calendar-buses-title">
+      <h2 id="calendar-buses-title">Reservas por bus y día</h2>
+      <div class="table-responsive" role="region" aria-label="Calendario semanal de buses" tabindex="0">
+        <table class="calendar-table">
+          <thead data-calendar-head></thead>
+          <tbody data-calendar-body></tbody>
+        </table>
+      </div>
+    </section>
   </main>
   <div data-layout-footer aria-busy="true"></div>
 </body>

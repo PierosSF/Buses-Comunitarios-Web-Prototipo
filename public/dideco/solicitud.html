@@ -9,11 +9,90 @@
   <script src="/js/api.js" defer></script>
   <script src="/js/layout.js" defer></script>
   <script src="/js/guard.js" defer></script>
+  <script src="/js/rut.js" defer></script>
+  <script src="/js/solicitudes-ui.js" defer></script>
+  <script src="/js/dideco-solicitud.js" defer></script>
 </head>
 <body id="top" data-nav-active="servicios" data-required-role="dideco">
   <div data-layout-header aria-busy="true"></div>
   <main id="contenido-principal" tabindex="-1">
-    <h1>Detalle de solicitud</h1>
+    <div class="page-heading">
+      <div>
+        <h1 data-detail-title>Detalle de solicitud</h1>
+        <p>Revise los antecedentes y registre la decisión de DIDECO.</p>
+      </div>
+      <a class="button-secondary" href="/dideco/bandeja.html">Volver a solicitudes</a>
+    </div>
+
+    <p class="page-message" role="status" aria-live="polite" data-detail-message>
+      Cargando el detalle de la solicitud...
+    </p>
+
+    <div data-dideco-detail hidden>
+      <section class="dideco-summary" aria-label="Antecedentes de la solicitud">
+        <p class="detail-state-line">
+          Estado:
+          <span class="state-badge" data-detail-state></span>
+        </p>
+        <dl class="request-card-data" data-request-data></dl>
+        <p class="page-message dideco-observation" data-dideco-observation hidden></p>
+      </section>
+
+      <section class="detail-section dideco-passengers" aria-labelledby="dideco-passengers-title">
+        <h2 id="dideco-passengers-title">Nómina y revisión de RUT</h2>
+        <div class="table-responsive" role="region" aria-label="Nómina de pasajeros" tabindex="0">
+          <table class="passenger-table">
+            <thead>
+              <tr>
+                <th scope="col">N.º</th>
+                <th scope="col">Nombre completo</th>
+                <th scope="col">RUT</th>
+                <th scope="col">Validación</th>
+              </tr>
+            </thead>
+            <tbody data-passengers-body></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="dideco-actions" aria-labelledby="dideco-actions-title">
+        <h2 id="dideco-actions-title">Acciones de revisión</h2>
+        <button class="button-primary" type="button" data-review-action hidden>
+          Pasar a revisión
+        </button>
+
+        <div data-assignment-actions hidden>
+          <div class="form-field">
+            <label for="bus-disponible">Bus disponible para esta fecha</label>
+            <select id="bus-disponible" data-bus-select>
+              <option value="">Cargando buses disponibles...</option>
+            </select>
+          </div>
+          <button class="button-primary" type="button" data-assign-action disabled>
+            Asignar bus y crear decreto pendiente
+          </button>
+          <p class="form-help">Solo se muestran buses activos, libres ese día y con asientos suficientes. La disponibilidad se confirma nuevamente al asignar.</p>
+        </div>
+
+        <div class="form-field" data-decision-actions hidden>
+          <label for="comentario-dideco">Comentario obligatorio para devolver o rechazar</label>
+          <textarea id="comentario-dideco" rows="4" maxlength="2000" data-decision-comment></textarea>
+          <div class="dideco-action-buttons">
+            <button class="button-secondary" type="button" data-decision="devolver">
+              Devolver para corrección
+            </button>
+            <button class="button-danger" type="button" data-decision="rechazar">
+              Rechazar solicitud
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="detail-section dideco-history" aria-labelledby="dideco-history-title">
+        <h2 id="dideco-history-title">Historial de la solicitud</h2>
+        <ol class="request-timeline" data-request-history></ol>
+      </section>
+    </div>
   </main>
   <div data-layout-footer aria-busy="true"></div>
 </body>

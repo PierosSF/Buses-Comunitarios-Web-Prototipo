@@ -11,6 +11,7 @@ const pasosSolicitud = [
 const progresoSolicitud = {
   borrador: -1,
   enviada: 0,
+  devuelta: 0,
   en_revision: 2,
   bus_asignado: 3,
   decreto_firmado: 4,
@@ -20,6 +21,7 @@ const progresoSolicitud = {
 const etiquetasEstadoSolicitud = {
   borrador: 'Borrador',
   enviada: 'Enviada',
+  devuelta: 'Devuelta para corregir',
   en_revision: 'En revisión DIDECO',
   bus_asignado: 'Bus asignado',
   decreto_firmado: 'Decreto firmado',
@@ -47,7 +49,13 @@ function crearProgresoSolicitud(estado) {
     if (indice < actual) {
       paso.classList.add('is-complete');
     } else if (indice === actual) {
-      paso.classList.add(estado === 'rechazada' ? 'is-rejected' : 'is-current');
+      paso.classList.add(
+        estado === 'rechazada'
+          ? 'is-rejected'
+          : estado === 'devuelta'
+            ? 'is-returned'
+            : 'is-current'
+      );
       paso.setAttribute('aria-current', 'step');
     }
 
