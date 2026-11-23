@@ -51,3 +51,16 @@ Prototipo local para gestionar solicitudes y asignaciones de buses comunitarios 
 9. Abra `http://localhost:3000`. Para comprobar la conexión a MySQL, visite `http://localhost:3000/api/salud`.
 
 El comando `npm.cmd run dev` inicia el servidor con nodemon durante el desarrollo en PowerShell. El valor de `SESSION_SECRET` incluido en `.env.example` es solo para desarrollo local; cámbielo antes de usar el sistema en otro entorno.
+
+## Acceso de demostración
+
+Abra `http://localhost:3000/login.html`. Las cuatro cuentas incluidas en `database/seed.sql` usan la clave común `Demo1234`:
+
+| Perfil | RUT |
+| --- | --- |
+| Dirigente 1 | `99999980-8` |
+| Dirigente 2 | `99999981-6` |
+| DIDECO | `99999982-4` |
+| Administrador municipal | `99999983-2` |
+
+Al iniciar sesión, la portada lleva a cada perfil a su página inicial.

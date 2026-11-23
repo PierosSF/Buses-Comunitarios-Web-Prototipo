@@ -244,12 +244,33 @@ function prepararAccionesDeSesion() {
 
   const botonCerrar = document.querySelector('[data-logout]');
   const botonNotificaciones = document.querySelector('[data-notifications]');
+  const estadoSesion = document.querySelector('[data-session-status]');
 
   if (botonCerrar) {
     botonCerrar.addEventListener('click', () => {
       document.dispatchEvent(new CustomEvent('plc:solicitar-cierre-sesion'));
     });
   }
+
+  document.addEventListener('plc:solicitar-cierre-sesion', async () => {
+    if (!window.apiFetch || !botonCerrar || !estadoSesion) {
+      return;
+    }
+
+    botonCerrar.disabled = true;
+    estadoSesion.textContent = 'Cerrando su sesión...';
+    estadoSesion.hidden = false;
+    const respuesta = await window.apiFetch('/api/auth/logout', { method: 'POST' });
+    botonCerrar.disabled = false;
+
+    if (!respuesta.ok) {
+      estadoSesion.textContent = `No se pudo cerrar la sesión. ${respuesta.error}`;
+      return;
+    }
+
+    document.dispatchEvent(new CustomEvent('plc:sesion-cerrada'));
+    window.location.replace('/login.html');
+  });
 
   if (botonNotificaciones) {
     botonNotificaciones.addEventListener('click', () => {

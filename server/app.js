@@ -3,6 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const dotenv = require('dotenv');
 const rutasSalud = require('./routes/salud');
+const rutasAuth = require('./routes/auth');
 
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
@@ -14,7 +15,7 @@ if (!secretoSesion) {
 
 const app = express();
 
-app.use(express.json());
+app.use(express.json({ limit: '10kb' }));
 app.use(session({
   secret: secretoSesion,
   resave: false,
@@ -27,6 +28,7 @@ app.use(session({
 }));
 
 app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use('/api/auth', rutasAuth);
 app.use('/api', rutasSalud);
 
 app.use('/api', (req, res, next) => {

@@ -6,12 +6,76 @@
   <title>Iniciar sesión | Buses Comunitarios</title>
   <link rel="stylesheet" href="/css/base.css">
   <link rel="stylesheet" href="/css/layout.css">
+  <script src="/js/api.js" defer></script>
   <script src="/js/layout.js" defer></script>
+  <script src="/js/rut.js" defer></script>
+  <script src="/js/login.js" defer></script>
 </head>
 <body id="top" data-nav-active="servicios">
   <div data-layout-header aria-busy="true"></div>
-  <main id="contenido-principal" tabindex="-1">
+  <main class="login-page" id="contenido-principal" tabindex="-1">
     <h1>Iniciar sesión</h1>
+    <p>Ingrese su RUT y clave para continuar con su solicitud de bus comunitario.</p>
+
+    <div class="login-columns">
+      <section class="login-card" aria-labelledby="login-title">
+        <h2 id="login-title">Acceso a la plataforma</h2>
+        <form data-login-form novalidate>
+          <div class="form-field">
+            <label for="login-rut">RUT</label>
+            <input
+              id="login-rut"
+              name="rut"
+              type="text"
+              inputmode="text"
+              autocomplete="username"
+              autocapitalize="characters"
+              spellcheck="false"
+              maxlength="12"
+              aria-describedby="login-rut-help"
+              aria-invalid="false"
+              aria-required="true"
+            >
+            <span class="form-help" id="login-rut-help">Escriba su RUT. El formato se agrega automáticamente.</span>
+          </div>
+          <div class="form-field">
+            <label for="login-clave">Clave</label>
+            <input
+              id="login-clave"
+              name="clave"
+              type="password"
+              autocomplete="current-password"
+              aria-required="true"
+            >
+          </div>
+          <p class="login-message" role="alert" aria-live="assertive" data-login-message hidden></p>
+          <button class="login-submit" type="submit">Ingresar</button>
+        </form>
+      </section>
+
+      <aside class="demo-accounts" aria-labelledby="demo-accounts-title">
+        <h2 id="demo-accounts-title">Cuentas de demostración</h2>
+        <p>Puede usar cualquiera de estas cuentas. La clave común es <strong>Demo1234</strong>.</p>
+        <dl>
+          <div>
+            <dt>Dirigente 1</dt>
+            <dd><code>99999980-8</code></dd>
+          </div>
+          <div>
+            <dt>Dirigente 2</dt>
+            <dd><code>99999981-6</code></dd>
+          </div>
+          <div>
+            <dt>DIDECO</dt>
+            <dd><code>99999982-4</code></dd>
+          </div>
+          <div>
+            <dt>Administrador municipal</dt>
+            <dd><code>99999983-2</code></dd>
+          </div>
+        </dl>
+      </aside>
+    </div>
   </main>
   <div data-layout-footer aria-busy="true"></div>
 </body>
