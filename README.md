@@ -64,3 +64,11 @@ Abra `http://localhost:3000/login.html`. Las cuatro cuentas incluidas en `databa
 | Administrador municipal | `99999983-2` |
 
 Al iniciar sesión, la portada lleva a cada perfil a su página inicial.
+
+## Módulo del dirigente
+
+Con una cuenta de dirigente, abra **Nueva solicitud** para completar los datos del viaje y la nómina. Puede guardar un borrador incompleto y retomarlo desde **Mis solicitudes**. Antes de enviarlo, el sistema exige los datos del viaje, una fecha futura y entre 1 y 36 pasajeros con RUT válidos y no repetidos.
+
+En cada tarjeta puede revisar el avance y abrir el detalle. Cuando el decreto esté firmado, el detalle permite imprimirlo o guardarlo como PDF desde el navegador.
+
+Si ya tenía una base creada antes de este módulo, ejecute `database/schema.sql` en phpMyAdmin para habilitar borradores incompletos y la secuencia de folios. Esta actualización no borra los registros; no ejecute `npm.cmd run seed` salvo que quiera recrear toda la base.

@@ -9,11 +9,102 @@
   <script src="/js/api.js" defer></script>
   <script src="/js/layout.js" defer></script>
   <script src="/js/guard.js" defer></script>
+  <script src="/js/rut.js" defer></script>
+  <script src="/js/solicitudes-ui.js" defer></script>
+  <script src="/js/dirigente-nueva-solicitud.js" defer></script>
 </head>
 <body id="top" data-nav-active="servicios" data-required-role="dirigente">
   <div data-layout-header aria-busy="true"></div>
   <main id="contenido-principal" tabindex="-1">
-    <h1>Nueva solicitud de bus</h1>
+    <div class="page-heading">
+      <div>
+        <h1 data-form-title>Nueva solicitud de bus</h1>
+        <p data-form-description>Complete los datos del viaje y la nómina de pasajeros. Puede guardar un borrador y terminarlo después.</p>
+      </div>
+      <a class="button-secondary" href="/dirigente/solicitudes.html">Volver a mis solicitudes</a>
+    </div>
+
+    <p class="page-message" role="status" aria-live="polite" data-form-message hidden></p>
+    <a class="button-secondary detail-link" data-open-detail hidden></a>
+
+    <form class="request-form" data-request-form novalidate>
+      <fieldset class="form-section">
+        <legend>Datos del viaje</legend>
+        <div class="travel-fields">
+          <div class="form-field">
+            <label for="destino">Destino</label>
+            <input id="destino" name="destino" type="text" maxlength="200" autocomplete="off">
+          </div>
+          <div class="form-field">
+            <label for="fecha-salida">Fecha de salida</label>
+            <input id="fecha-salida" name="fecha_salida" type="date">
+          </div>
+          <div class="form-field">
+            <label for="hora-salida">Hora de salida</label>
+            <input id="hora-salida" name="hora_salida" type="time">
+          </div>
+          <div class="form-field">
+            <label for="hora-regreso">Hora de regreso</label>
+            <input id="hora-regreso" name="hora_regreso" type="time">
+          </div>
+          <div class="form-field">
+            <label for="motivo">Motivo del viaje</label>
+            <select id="motivo" name="motivo">
+              <option value="">Seleccione un motivo</option>
+              <option value="recreativa">Recreativa para adultos mayores</option>
+              <option value="deportiva">Deportiva</option>
+              <option value="cultural">Cultural</option>
+              <option value="educativa">Educativa</option>
+            </select>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend>Nómina de pasajeros</legend>
+        <p>Ingrese el nombre completo y RUT de cada pasajero. Se permite un máximo de 36 personas.</p>
+        <p class="passenger-count" aria-live="polite" data-passenger-count>0 de 36 cupos</p>
+
+        <div class="table-responsive passenger-table-scroll" role="region" aria-label="Tabla de pasajeros" tabindex="0">
+          <table class="passenger-table">
+            <thead>
+              <tr>
+                <th scope="col">Nombre completo</th>
+                <th scope="col">RUT</th>
+                <th scope="col">Validación</th>
+                <th scope="col">Acción</th>
+              </tr>
+            </thead>
+            <tbody data-passenger-rows></tbody>
+          </table>
+        </div>
+
+        <button class="button-secondary" type="button" data-add-passenger>+ Agregar pasajero</button>
+
+        <div class="excel-import">
+          <label for="pegar-pasajeros">¿Tiene una lista en Excel? Pegue una persona por línea con este formato:</label>
+          <p id="formato-excel"><code>Nombre completo; RUT</code></p>
+          <textarea
+            id="pegar-pasajeros"
+            rows="4"
+            aria-describedby="formato-excel"
+            data-paste-passengers
+          ></textarea>
+          <button class="button-secondary" type="button" data-import-passengers>
+            Agregar líneas pegadas
+          </button>
+        </div>
+      </fieldset>
+
+      <div class="form-actions">
+        <button class="button-secondary" type="submit" data-action="guardar" data-save-draft>
+          Guardar borrador
+        </button>
+        <button class="button-primary" type="submit" data-action="enviar" data-send-request>
+          Enviar solicitud
+        </button>
+      </div>
+    </form>
   </main>
   <div data-layout-footer aria-busy="true"></div>
 </body>

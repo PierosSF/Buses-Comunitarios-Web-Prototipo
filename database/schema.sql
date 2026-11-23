@@ -45,16 +45,23 @@ CREATE TABLE IF NOT EXISTS buses (
   UNIQUE KEY uq_buses_patente (patente)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Contador interno para generar folios correlativos sin colisiones concurrentes.
+CREATE TABLE IF NOT EXISTS secuencias_folios (
+  anio SMALLINT UNSIGNED NOT NULL,
+  ultimo INT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (anio)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS solicitudes (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   folio VARCHAR(9) NOT NULL,
   organizacion_id INT UNSIGNED NOT NULL,
   dirigente_id INT UNSIGNED NOT NULL,
-  destino VARCHAR(200) NOT NULL,
-  fecha_salida DATE NOT NULL,
-  hora_salida TIME NOT NULL,
-  hora_regreso TIME NOT NULL,
-  motivo ENUM('recreativa', 'deportiva', 'cultural', 'educativa') NOT NULL,
+  destino VARCHAR(200) NULL,
+  fecha_salida DATE NULL,
+  hora_salida TIME NULL,
+  hora_regreso TIME NULL,
+  motivo ENUM('recreativa', 'deportiva', 'cultural', 'educativa') NULL,
   estado ENUM(
     'borrador',
     'enviada',
@@ -142,3 +149,15 @@ CREATE TABLE IF NOT EXISTS notificaciones (
   CONSTRAINT fk_notificaciones_solicitud
     FOREIGN KEY (solicitud_id) REFERENCES solicitudes (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Permite guardar borradores incompletos; el envío exige validar estos campos.
+ALTER TABLE solicitudes
+  MODIFY destino VARCHAR(200) NULL,
+  MODIFY fecha_salida DATE NULL,
+  MODIFY hora_salida TIME NULL,
+  MODIFY hora_regreso TIME NULL,
+  MODIFY motivo ENUM('recreativa', 'deportiva', 'cultural', 'educativa') NULL;
+
+ALTER TABLE pasajeros
+  MODIFY nombre VARCHAR(150) NULL,
+  MODIFY rut VARCHAR(12) NULL;

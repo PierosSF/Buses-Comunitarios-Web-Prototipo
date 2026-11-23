@@ -9,11 +9,23 @@
   <script src="/js/api.js" defer></script>
   <script src="/js/layout.js" defer></script>
   <script src="/js/guard.js" defer></script>
+  <script src="/js/solicitudes-ui.js" defer></script>
+  <script src="/js/dirigente-solicitudes.js" defer></script>
 </head>
 <body id="top" data-nav-active="servicios" data-required-role="dirigente">
   <div data-layout-header aria-busy="true"></div>
   <main id="contenido-principal" tabindex="-1">
-    <h1>Mis solicitudes</h1>
+    <div class="page-heading">
+      <div>
+        <h1>Mis solicitudes</h1>
+        <p>Revise el estado de sus viajes y sus autorizaciones.</p>
+      </div>
+      <a class="button-primary" href="/dirigente/nueva-solicitud.html">+ Nueva solicitud</a>
+    </div>
+    <p class="page-message" role="status" aria-live="polite" data-list-message>
+      Cargando sus solicitudes...
+    </p>
+    <section class="request-list" aria-label="Solicitudes de su organización" data-request-list></section>
   </main>
   <div data-layout-footer aria-busy="true"></div>
 </body>

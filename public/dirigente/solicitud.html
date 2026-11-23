@@ -9,11 +9,77 @@
   <script src="/js/api.js" defer></script>
   <script src="/js/layout.js" defer></script>
   <script src="/js/guard.js" defer></script>
+  <script src="/js/rut.js" defer></script>
+  <script src="/js/solicitudes-ui.js" defer></script>
+  <script src="/js/dirigente-solicitud.js" defer></script>
 </head>
 <body id="top" data-nav-active="servicios" data-required-role="dirigente">
   <div data-layout-header aria-busy="true"></div>
   <main id="contenido-principal" tabindex="-1">
-    <h1>Detalle de solicitud</h1>
+    <div class="page-heading">
+      <div>
+        <h1 data-detail-title>Detalle de solicitud</h1>
+        <p>Revise los datos del viaje, los pasajeros y los cambios de estado.</p>
+      </div>
+      <a class="button-secondary" href="/dirigente/solicitudes.html">Volver a mis solicitudes</a>
+    </div>
+
+    <p class="page-message" role="status" aria-live="polite" data-detail-message>
+      Cargando el detalle de la solicitud...
+    </p>
+
+    <div data-request-detail hidden>
+      <section class="request-detail-card" aria-label="Estado y datos del viaje">
+        <p class="detail-state-line">
+          Estado actual:
+          <span class="state-badge" data-detail-state></span>
+        </p>
+        <div data-detail-progress></div>
+        <dl class="request-card-data" data-request-data></dl>
+        <p class="page-message dideco-observation" data-dideco-observation hidden></p>
+      </section>
+
+      <section class="detail-section" aria-labelledby="passenger-title">
+        <h2 id="passenger-title">Nómina de pasajeros</h2>
+        <p class="page-message" data-passenger-empty hidden>No se han agregado pasajeros al borrador.</p>
+        <div class="table-responsive" role="region" aria-label="Pasajeros de la solicitud" tabindex="0">
+          <table class="passenger-table">
+            <thead>
+              <tr>
+                <th scope="col">Nombre completo</th>
+                <th scope="col">RUT</th>
+              </tr>
+            </thead>
+            <tbody data-detail-passengers></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="detail-section" aria-labelledby="history-title">
+        <h2 id="history-title">Historial de la solicitud</h2>
+        <ol class="request-timeline" data-request-history></ol>
+      </section>
+
+      <p class="page-message" role="status" aria-live="polite" data-decree-pending hidden></p>
+      <section class="detail-section decree-section" id="decreto" aria-labelledby="decree-title" data-decree-section hidden>
+        <div class="page-heading no-print">
+          <h2 id="decree-title">Decreto de circulación</h2>
+          <button class="button-primary" type="button" data-print-decree>Imprimir o guardar autorización</button>
+        </div>
+        <article class="decree-document" data-print-document hidden>
+          <h2>Municipalidad de Padre Las Casas</h2>
+          <p>Decreto de Circulación de Vehículo</p>
+          <p><strong>Número:</strong> <span data-decree-number></span></p>
+          <p><strong>Folio de solicitud:</strong> <span data-decree-folio></span></p>
+          <dl class="request-card-data" data-decree-content></dl>
+          <h3>Pasajeros autorizados</h3>
+          <ol data-decree-passengers></ol>
+          <p><strong>Firmado el:</strong> <span data-decree-sign-date></span></p>
+          <p><strong>Observación:</strong> <span data-decree-observation></span></p>
+          <p class="decree-note">Documento de demostración del prototipo.</p>
+        </article>
+      </section>
+    </div>
   </main>
   <div data-layout-footer aria-busy="true"></div>
 </body>
