@@ -22,12 +22,14 @@ const app = express();
 app.use(express.json({ limit: '10kb' }));
 app.use(session({
   secret: secretoSesion,
+  name: 'buses.sid',
   resave: false,
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
     sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production'
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 8 * 60 * 60 * 1000
   }
 }));
 

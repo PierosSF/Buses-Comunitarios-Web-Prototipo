@@ -75,7 +75,7 @@ router.post('/logout', (req, res, next) => {
       return;
     }
 
-    res.clearCookie('connect.sid', {
+    res.clearCookie('buses.sid', {
       path: '/',
       httpOnly: true,
       sameSite: 'lax',

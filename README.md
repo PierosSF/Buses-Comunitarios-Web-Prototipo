@@ -2,6 +2,49 @@
 
 Prototipo local para gestionar solicitudes y asignaciones de buses comunitarios de Padre Las Casas. La API y el sitio estático se sirven desde Node.js en `http://localhost:3000`.
 
+## Instalación en un computador nuevo con XAMPP
+
+1. Instale **Node.js 20 o superior**, **npm** y **XAMPP**.
+2. Abra el Panel de Control de XAMPP e inicie **MySQL**.
+3. Copie el proyecto a una carpeta local.
+4. Desde PowerShell, sitúese en la carpeta del proyecto:
+
+   ```powershell
+   cd "C:\ruta\Buses-Comunitarios-Prototipo"
+   npm.cmd install
+   Copy-Item .env.example .env
+   ```
+
+5. Compruebe `.env`. Para una instalación estándar de XAMPP puede conservar:
+
+   ```dotenv
+   PORT=3000
+   SESSION_SECRET=cambie-esta-clave
+   DB_HOST=localhost
+   DB_USER=root
+   DB_PASSWORD=
+   DB_NAME=buses_comunitarios
+   ```
+
+6. Configure una clave larga y distinta en `SESSION_SECRET`.
+7. Cree y cargue la base ejecutando:
+
+   ```powershell
+   npm.cmd run seed
+   ```
+
+   Esta opción recrea `buses_comunitarios`; úsela solo si puede borrar los datos existentes.
+8. Como alternativa manual, importe `database/schema.sql` y después `database/seed.sql` desde phpMyAdmin.
+9. Inicie el sitio:
+
+   ```powershell
+   npm.cmd start
+   ```
+
+10. Abra `http://localhost:3000/login.html`. Verifique MySQL en `http://localhost:3000/api/salud`.
+
+Si ya existía una base y no desea borrarla, importe `database/schema.sql` sobre ella. Si el puerto 3000 está ocupado, cambie `PORT` en `.env` y reinicie el servidor.
+
 ## Requisitos
 
 - Node.js 20 o superior y npm.
