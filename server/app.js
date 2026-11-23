@@ -7,6 +7,7 @@ const rutasAuth = require('./routes/auth');
 const rutasSolicitudes = require('./routes/solicitudes');
 const rutasDideco = require('./routes/dideco');
 const rutasAdmin = require('./routes/admin');
+const rutasNotificaciones = require('./routes/notificaciones');
 
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
@@ -35,6 +36,7 @@ app.use('/api/auth', rutasAuth);
 app.use('/api/solicitudes', rutasSolicitudes);
 app.use('/api/dideco', rutasDideco);
 app.use('/api/admin', rutasAdmin);
+app.use('/api/notificaciones', rutasNotificaciones);
 app.use('/api', rutasSalud);
 
 app.use('/api', (req, res, next) => {

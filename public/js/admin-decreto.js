@@ -195,6 +195,7 @@ function renderizarDecreto(datos) {
   renderizarDatosDocumento(datos);
   renderizarRevision(datos);
   renderizarFirma(datos.decreto);
+  window.SolicitudesUI.crearLineaTiempo('[data-request-history]', datos.historial || []);
 
   document.querySelector('[data-review-state]').dataset.estado =
     datos.decreto.estado;

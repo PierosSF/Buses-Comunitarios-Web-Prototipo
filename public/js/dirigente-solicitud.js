@@ -44,40 +44,7 @@ function formatearFechaHoraHistorial(valor) {
 }
 
 function mostrarHistorial(historial) {
-  const lista = document.querySelector('[data-request-history]');
-  lista.replaceChildren();
-
-  if (historial.length === 0) {
-    const vacio = document.createElement('li');
-    vacio.textContent = 'Aún no hay cambios de estado registrados.';
-    lista.append(vacio);
-    return;
-  }
-
-  historial.forEach((evento) => {
-    const elemento = document.createElement('li');
-    const titulo = document.createElement('strong');
-    const fecha = document.createElement('time');
-    const detalle = document.createElement('p');
-    const anterior = evento.estado_anterior
-      ? window.SolicitudesUI.etiquetaEstado(evento.estado_anterior)
-      : 'Solicitud creada';
-    const nuevo = window.SolicitudesUI.etiquetaEstado(evento.estado_nuevo);
-
-    titulo.textContent = `${anterior} → ${nuevo}`;
-    fecha.dateTime = evento.created_at || '';
-    fecha.textContent = formatearFechaHoraHistorial(evento.created_at);
-    detalle.textContent = [
-      evento.comentario || '',
-      evento.usuario_nombre ? `Responsable: ${evento.usuario_nombre}` : ''
-    ].filter(Boolean).join(' ');
-
-    elemento.append(titulo, fecha);
-    if (detalle.textContent) {
-      elemento.append(detalle);
-    }
-    lista.append(elemento);
-  });
+  window.SolicitudesUI.crearLineaTiempo('[data-request-history]', historial);
 }
 
 function obtenerContenidoDecreto(contenido) {

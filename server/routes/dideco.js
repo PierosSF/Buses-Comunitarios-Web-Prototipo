@@ -4,6 +4,7 @@ const express = require('express');
 const pool = require('../db');
 const { requireRole } = require('../middleware/auth');
 const { limpiarRut, validarRut } = require('../utils/rut');
+const { notificar } = require('../utils/notificar');
 
 const router = express.Router();
 const estadosSolicitud = new Set([
@@ -130,17 +131,6 @@ async function registrarCambio(conexion, solicitud, estadoNuevo, comentario, usu
        (solicitud_id, estado_anterior, estado_nuevo, usuario_id, comentario)
      VALUES (?, ?, ?, ?, ?)`,
     [solicitud.id, solicitud.estado, estadoNuevo, usuarioId, comentario || null]
-  );
-  await conexion.execute(
-    `INSERT INTO notificaciones (usuario_id, solicitud_id, mensaje, canal)
-     VALUES (?, ?, ?, 'app')`,
-    [
-      solicitud.dirigente_id,
-      solicitud.id,
-      comentario
-        ? `La solicitud ${solicitud.folio} cambió a ${estadoNuevo}: ${comentario}`
-        : `La solicitud ${solicitud.folio} cambió a ${estadoNuevo}.`
-    ]
   );
 }
 
@@ -604,8 +594,19 @@ router.post('/solicitudes/:id/revision', async (req, res, next) => {
         'DIDECO inició la revisión.',
         req.usuario.id
       );
-      return { id, folio: solicitud.folio, estado: 'en_revision' };
+      return {
+        id,
+        folio: solicitud.folio,
+        dirigente_id: solicitud.dirigente_id,
+        estado: 'en_revision'
+      };
     });
+
+    await notificar(
+      resultado.dirigente_id,
+      resultado.id,
+      `Su solicitud ${resultado.folio} está en revisión por DIDECO.`
+    );
 
     return res.json({ ok: true, data: resultado });
   } catch (error) {
@@ -751,23 +752,33 @@ router.post('/solicitudes/:id/asignar-bus', async (req, res, next) => {
          VALUES (?, 'en_revision', 'bus_asignado', ?, ?)`,
         [id, req.usuario.id, `Se asignó ${bus.nombre}; decreto pendiente.`]
       );
-      await conexion.execute(
-        `INSERT INTO notificaciones (usuario_id, solicitud_id, mensaje, canal)
-         VALUES (?, ?, ?, 'app')`,
-        [
-          solicitud.dirigente_id,
-          id,
-          `Se asignó ${bus.nombre} a su solicitud ${solicitud.folio}. El decreto está pendiente.`
-        ]
-      );
-
       return {
         id,
         folio: solicitud.folio,
+        dirigente_id: solicitud.dirigente_id,
+        bus_nombre: bus.nombre,
         estado: 'bus_asignado',
         bus: { id: bus.id, nombre: bus.nombre, patente: bus.patente }
       };
     });
+
+    await notificar(
+      resultado.dirigente_id,
+      resultado.id,
+      `Su solicitud ${resultado.folio} ya tiene bus asignado: ${resultado.bus_nombre}.`
+    );
+    const [administradores] = await pool.execute(
+      `SELECT id
+       FROM usuarios
+       WHERE rol = 'administrador' AND activo = 1`
+    );
+    for (const administrador of administradores) {
+      await notificar(
+        administrador.id,
+        resultado.id,
+        `La solicitud ${resultado.folio} tiene bus asignado y el decreto está pendiente.`
+      );
+    }
 
     return res.json({ ok: true, data: resultado });
   } catch (error) {
@@ -792,8 +803,18 @@ async function resolverDecision(req, res, next, estadoNuevo, accion) {
         comentario,
         req.usuario.id
       );
-      return { id, folio: solicitud.folio, estado: estadoNuevo };
+      return {
+        id,
+        folio: solicitud.folio,
+        dirigente_id: solicitud.dirigente_id,
+        estado: estadoNuevo,
+        comentario
+      };
     });
+    const mensaje = estadoNuevo === 'rechazada'
+      ? `Su solicitud ${resultado.folio} fue rechazada. ${resultado.comentario}`
+      : `Su solicitud ${resultado.folio} fue devuelta para corregir. ${resultado.comentario}`;
+    await notificar(resultado.dirigente_id, resultado.id, mensaje);
     return res.json({ ok: true, data: resultado });
   } catch (error) {
     return next(error);

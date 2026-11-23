@@ -244,6 +244,10 @@ function prepararAccionesDeSesion() {
 
   const botonCerrar = document.querySelector('[data-logout]');
   const botonNotificaciones = document.querySelector('[data-notifications]');
+  const panelNotificaciones = document.querySelector('[data-notifications-panel]');
+  const listaNotificaciones = document.querySelector('[data-notifications-list]');
+  const vacioNotificaciones = document.querySelector('[data-notifications-empty]');
+  const contadorNotificaciones = document.querySelector('[data-notification-count]');
   const estadoSesion = document.querySelector('[data-session-status]');
 
   if (botonCerrar) {
@@ -273,9 +277,110 @@ function prepararAccionesDeSesion() {
   });
 
   if (botonNotificaciones) {
-    botonNotificaciones.addEventListener('click', () => {
-      document.dispatchEvent(new CustomEvent('plc:abrir-notificaciones'));
+    const enlaceSolicitud = (notificacion) => {
+      const usuario = window.plcUsuarioActual;
+      if (!usuario) {
+        return null;
+      }
+      if (usuario.rol === 'dirigente' && notificacion.solicitud_id) {
+        return `/dirigente/solicitud.html?id=${encodeURIComponent(notificacion.solicitud_id)}`;
+      }
+      if (usuario.rol === 'dideco' && notificacion.solicitud_id) {
+        return `/dideco/solicitud.html?id=${encodeURIComponent(notificacion.solicitud_id)}`;
+      }
+      if (usuario.rol === 'administrador' && notificacion.decreto_id) {
+        return `/admin/decreto.html?id=${encodeURIComponent(notificacion.decreto_id)}`;
+      }
+      return null;
+    };
+
+    const marcarLeida = async (notificacion, boton) => {
+      if (!window.apiFetch || !notificacion || notificacion.leida) {
+        return;
+      }
+      boton.disabled = true;
+      const respuesta = await window.apiFetch(
+        `/api/notificaciones/${encodeURIComponent(notificacion.id)}/leida`,
+        { method: 'POST', body: JSON.stringify({}) }
+      );
+      if (respuesta.ok) {
+        await actualizarNotificaciones();
+      } else {
+        boton.disabled = false;
+        boton.textContent = respuesta.error;
+      }
+    };
+
+    const renderizarNotificaciones = (datos) => {
+      const elementos = datos.notificaciones || [];
+      contadorNotificaciones.hidden = datos.sin_leer === 0;
+      contadorNotificaciones.textContent = datos.sin_leer > 99 ? '99+' : String(datos.sin_leer);
+      botonNotificaciones.setAttribute(
+        'aria-label',
+        datos.sin_leer
+          ? `Notificaciones, ${datos.sin_leer} sin leer`
+          : 'Notificaciones'
+      );
+      listaNotificaciones.replaceChildren();
+      vacioNotificaciones.hidden = elementos.length > 0;
+
+      elementos.forEach((notificacion) => {
+        const item = document.createElement('li');
+        const mensaje = document.createElement('p');
+        const acciones = document.createElement('div');
+        const enlace = document.createElement('a');
+        const marcar = document.createElement('button');
+        item.className = `notification-item${notificacion.leida ? '' : ' is-unread'}`;
+        mensaje.textContent = notificacion.mensaje;
+        acciones.className = 'notification-actions';
+
+        const destino = enlaceSolicitud(notificacion);
+        if (destino) {
+          enlace.href = destino;
+          enlace.textContent = 'Ver solicitud';
+          acciones.append(enlace);
+        }
+        if (!notificacion.leida) {
+          marcar.type = 'button';
+          marcar.textContent = 'Marcar como leída';
+          marcar.addEventListener('click', () => marcarLeida(notificacion, marcar));
+          acciones.append(marcar);
+        }
+        item.append(mensaje, acciones);
+        listaNotificaciones.append(item);
+      });
+    };
+
+    const actualizarNotificaciones = async () => {
+      if (!window.apiFetch) {
+        return;
+      }
+      const respuesta = await window.apiFetch('/api/notificaciones');
+      if (respuesta.ok) {
+        renderizarNotificaciones(respuesta.data);
+      }
+    };
+
+    botonNotificaciones.addEventListener('click', async () => {
+      const abrir = panelNotificaciones.hidden;
+      panelNotificaciones.hidden = !abrir;
+      botonNotificaciones.setAttribute('aria-expanded', String(abrir));
+      if (abrir) {
+        await actualizarNotificaciones();
+      }
     });
+
+    document.addEventListener('keydown', (evento) => {
+      if (evento.key === 'Escape' && !panelNotificaciones.hidden) {
+        panelNotificaciones.hidden = true;
+        botonNotificaciones.setAttribute('aria-expanded', 'false');
+        botonNotificaciones.focus();
+      }
+    });
+
+    botonNotificaciones.setAttribute('aria-expanded', 'false');
+    actualizarNotificaciones();
+    window.setInterval(actualizarNotificaciones, 30000);
   }
 }
 

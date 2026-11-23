@@ -10,6 +10,7 @@
   <script src="/js/rut.js" defer></script>
   <script src="/js/layout.js" defer></script>
   <script src="/js/guard.js" defer></script>
+  <script src="/js/solicitudes-ui.js" defer></script>
   <script src="/js/admin-decreto.js" defer></script>
 </head>
 <body id="top" data-nav-active="servicios" data-required-role="administrador">
@@ -84,6 +85,10 @@
 
       <aside class="decree-review admin-card" aria-labelledby="review-heading">
         <h2 id="review-heading">Revisión del expediente</h2>
+        <section aria-labelledby="admin-history-title">
+          <h3 id="admin-history-title">Historial de la solicitud</h3>
+          <ol class="request-timeline" data-request-history></ol>
+        </section>
         <p class="review-state" data-review-state></p>
         <p class="review-warning" data-deadline-warning role="alert" hidden></p>
         <ul class="review-checklist" data-review-checks></ul>

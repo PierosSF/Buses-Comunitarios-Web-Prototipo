@@ -4,6 +4,7 @@ const express = require('express');
 const pool = require('../db');
 const { requireRole } = require('../middleware/auth');
 const { limpiarRut, validarRut } = require('../utils/rut');
+const { notificar } = require('../utils/notificar');
 
 const router = express.Router();
 const motivosPermitidos = new Set(['recreativa', 'deportiva', 'cultural', 'educativa']);
@@ -417,25 +418,21 @@ router.post('/:id/enviar', async (req, res, next) => {
         ]
       );
 
-      const [funcionarios] = await conexion.execute(
-        `SELECT id
-         FROM usuarios
-         WHERE rol = 'dideco' AND activo = 1`
-      );
-      for (const funcionario of funcionarios) {
-        await conexion.execute(
-          `INSERT INTO notificaciones (usuario_id, solicitud_id, mensaje, canal)
-           VALUES (?, ?, ?, 'app')`,
-          [
-            funcionario.id,
-            id,
-            `La solicitud ${filas[0].folio} fue enviada y está pendiente de revisión.`
-          ]
-        );
-      }
-
       return { id, folio: filas[0].folio, estado: 'enviada' };
     });
+
+    const [funcionarios] = await pool.execute(
+      `SELECT id
+       FROM usuarios
+       WHERE rol = 'dideco' AND activo = 1`
+    );
+    for (const funcionario of funcionarios) {
+      await notificar(
+        funcionario.id,
+        resultado.id,
+        `La solicitud ${resultado.folio} fue enviada y está pendiente de revisión.`
+      );
+    }
 
     return res.json({ ok: true, data: resultado });
   } catch (error) {

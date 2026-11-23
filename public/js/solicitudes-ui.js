@@ -84,9 +84,56 @@ function etiquetaEstadoSolicitud(estado) {
   return etiquetasEstadoSolicitud[estado] || 'Estado desconocido';
 }
 
+function crearLineaTiempo(selector, historial) {
+  const lista = typeof selector === 'string'
+    ? document.querySelector(selector)
+    : selector;
+  if (!lista) {
+    return;
+  }
+
+  lista.replaceChildren();
+  if (!Array.isArray(historial) || historial.length === 0) {
+    const vacio = document.createElement('li');
+    vacio.textContent = 'Aún no hay cambios de estado registrados.';
+    lista.append(vacio);
+    return;
+  }
+
+  historial.forEach((evento) => {
+    const elemento = document.createElement('li');
+    const titulo = document.createElement('strong');
+    const fecha = document.createElement('time');
+    const detalle = document.createElement('p');
+    const anterior = evento.estado_anterior
+      ? etiquetaEstadoSolicitud(evento.estado_anterior)
+      : 'Solicitud creada';
+
+    titulo.textContent = `${anterior} → ${etiquetaEstadoSolicitud(evento.estado_nuevo)}`;
+    fecha.dateTime = evento.created_at || '';
+    const fechaValor = new Date(evento.created_at);
+    fecha.textContent = Number.isNaN(fechaValor.getTime())
+      ? 'Fecha pendiente'
+      : new Intl.DateTimeFormat('es-CL', {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      }).format(fechaValor);
+    detalle.textContent = [
+      evento.comentario || '',
+      evento.usuario_nombre ? `Responsable: ${evento.usuario_nombre}` : ''
+    ].filter(Boolean).join(' ');
+    elemento.append(titulo, fecha);
+    if (detalle.textContent) {
+      elemento.append(detalle);
+    }
+    lista.append(elemento);
+  });
+}
+
 window.SolicitudesUI = Object.freeze({
   crearProgreso: crearProgresoSolicitud,
   formatearFecha: formatearFechaSolicitud,
   formatearHora: formatearHoraSolicitud,
-  etiquetaEstado: etiquetaEstadoSolicitud
+  etiquetaEstado: etiquetaEstadoSolicitud,
+  crearLineaTiempo
 });

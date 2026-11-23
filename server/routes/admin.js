@@ -5,6 +5,7 @@ const express = require('express');
 const pool = require('../db');
 const { requireRole } = require('../middleware/auth');
 const { limpiarRut, validarRut } = require('../utils/rut');
+const { notificar } = require('../utils/notificar');
 
 const router = express.Router();
 const estadosDecreto = new Set(['pendiente', 'firmado', 'devuelto']);
@@ -527,19 +528,10 @@ router.post('/decretos/:id/firmar', async (req, res, next) => {
          VALUES (?, 'bus_asignado', 'decreto_firmado', ?, ?)`,
         [solicitud.id, firmante.id, `Decreto ${numero} firmado. Firma de demostración.`]
       );
-      await conexion.execute(
-        `INSERT INTO notificaciones (usuario_id, solicitud_id, mensaje, canal)
-         VALUES (?, ?, ?, 'app')`,
-        [
-          solicitud.dirigente_id,
-          solicitud.id,
-          `El decreto ${numero} de su solicitud ${solicitud.folio} fue firmado.`
-        ]
-      );
-
       return {
         id,
         solicitud_id: solicitud.id,
+        dirigente_id: solicitud.dirigente_id,
         folio: solicitud.folio,
         estado: 'firmado',
         numero,
@@ -550,6 +542,24 @@ router.post('/decretos/:id/firmar', async (req, res, next) => {
         horas_restantes: revision.horas_restantes
       };
     });
+
+    await notificar(
+      resultado.dirigente_id,
+      resultado.solicitud_id,
+      `El decreto ${resultado.numero} de su solicitud ${resultado.folio} fue firmado.`
+    );
+    const [funcionariosDideco] = await pool.execute(
+      `SELECT id
+       FROM usuarios
+       WHERE rol = 'dideco' AND activo = 1`
+    );
+    for (const funcionario of funcionariosDideco) {
+      await notificar(
+        funcionario.id,
+        resultado.solicitud_id,
+        `El decreto ${resultado.numero} de la solicitud ${resultado.folio} fue firmado.`
+      );
+    }
 
     return res.json({ ok: true, data: resultado });
   } catch (error) {
@@ -594,19 +604,6 @@ router.post('/decretos/:id/devolver', async (req, res, next) => {
          VALUES (?, 'bus_asignado', 'en_revision', ?, ?)`,
         [solicitud.id, administrador.id, observacion]
       );
-      await conexion.execute(
-        `INSERT INTO notificaciones
-           (usuario_id, solicitud_id, mensaje, canal)
-         SELECT id, ?, ?, 'app'
-         FROM usuarios
-         WHERE rol = 'dideco'
-           AND activo = 1`,
-        [
-          solicitud.id,
-          `Administración devolvió el decreto de la solicitud ${solicitud.folio}. Revise la observación registrada.`
-        ]
-      );
-
       return {
         id,
         solicitud_id: solicitud.id,
@@ -615,6 +612,18 @@ router.post('/decretos/:id/devolver', async (req, res, next) => {
         estado_solicitud: 'en_revision'
       };
     });
+    const [funcionariosDideco] = await pool.execute(
+      `SELECT id
+       FROM usuarios
+       WHERE rol = 'dideco' AND activo = 1`
+    );
+    for (const funcionario of funcionariosDideco) {
+      await notificar(
+        funcionario.id,
+        resultado.solicitud_id,
+        `Administración devolvió el decreto de la solicitud ${resultado.folio}. Revise la observación registrada.`
+      );
+    }
     return res.json({ ok: true, data: resultado });
   } catch (error) {
     return next(error);

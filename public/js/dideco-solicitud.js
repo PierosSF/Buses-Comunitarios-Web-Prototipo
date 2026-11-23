@@ -72,37 +72,7 @@ function renderizarPasajerosDideco(pasajeros) {
 }
 
 function renderizarHistorialDideco(historial) {
-  const lista = document.querySelector('[data-request-history]');
-  lista.replaceChildren();
-
-  if (historial.length === 0) {
-    const elemento = document.createElement('li');
-    elemento.textContent = 'Aún no hay cambios de estado registrados.';
-    lista.append(elemento);
-    return;
-  }
-
-  historial.forEach((evento) => {
-    const elemento = document.createElement('li');
-    const titulo = document.createElement('strong');
-    const fecha = document.createElement('time');
-    const comentario = document.createElement('p');
-    const anterior = evento.estado_anterior
-      ? window.SolicitudesUI.etiquetaEstado(evento.estado_anterior)
-      : 'Solicitud creada';
-    titulo.textContent = `${anterior} → ${window.SolicitudesUI.etiquetaEstado(evento.estado_nuevo)}`;
-    fecha.dateTime = evento.created_at || '';
-    fecha.textContent = formatearFechaEvento(evento.created_at);
-    comentario.textContent = [
-      evento.comentario || '',
-      evento.usuario_nombre ? `Responsable: ${evento.usuario_nombre}` : ''
-    ].filter(Boolean).join(' ');
-    elemento.append(titulo, fecha);
-    if (comentario.textContent) {
-      elemento.append(comentario);
-    }
-    lista.append(elemento);
-  });
+  window.SolicitudesUI.crearLineaTiempo('[data-request-history]', historial);
 }
 
 function renderizarBusesDisponibles(buses) {
