@@ -32,7 +32,7 @@ async function apiFetch(url, opciones) {
       };
     }
 
-    if (respuesta.status === 401 && redirigirSiNoAutorizado) {
+    if (respuesta.status === 401 && redirigirSiNoAutorizado && window.location.pathname !== '/login.html') {
       window.location.replace('/login.html');
     }
 

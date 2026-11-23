@@ -386,10 +386,7 @@ function prepararAccionesDeSesion() {
       if (!window.apiFetch) {
         return;
       }
-      const respuesta = await window.apiFetch('/api/notificaciones');
-      if (respuesta.ok) {
-        renderizarNotificaciones(respuesta.data);
-      }
+    const respuesta = await window.apiFetch('/api/notificaciones', { redirectOnUnauthorized: false });
     };
 
     botonNotificaciones.addEventListener('click', async () => {
