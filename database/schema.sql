@@ -1,4 +1,9 @@
+-- Esquema de la plataforma de Buses Comunitarios.
 CREATE DATABASE IF NOT EXISTS buses_comunitarios
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+ALTER DATABASE buses_comunitarios
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
@@ -11,7 +16,7 @@ CREATE TABLE IF NOT EXISTS organizaciones (
   sector VARCHAR(100) NOT NULL,
   PRIMARY KEY (id),
   UNIQUE KEY uq_organizaciones_nombre (nombre)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS usuarios (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -25,9 +30,10 @@ CREATE TABLE IF NOT EXISTS usuarios (
   PRIMARY KEY (id),
   UNIQUE KEY uq_usuarios_rut (rut),
   UNIQUE KEY uq_usuarios_email (email),
+  KEY ix_usuarios_organizacion (organizacion_id),
   CONSTRAINT fk_usuarios_organizacion
     FOREIGN KEY (organizacion_id) REFERENCES organizaciones (id)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS buses (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -37,7 +43,7 @@ CREATE TABLE IF NOT EXISTS buses (
   activo TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (id),
   UNIQUE KEY uq_buses_patente (patente)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS solicitudes (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -48,7 +54,7 @@ CREATE TABLE IF NOT EXISTS solicitudes (
   fecha_salida DATE NOT NULL,
   hora_salida TIME NOT NULL,
   hora_regreso TIME NOT NULL,
-  motivo VARCHAR(50) NOT NULL,
+  motivo ENUM('recreativa', 'deportiva', 'cultural', 'educativa') NOT NULL,
   estado ENUM(
     'borrador',
     'enviada',
@@ -64,13 +70,15 @@ CREATE TABLE IF NOT EXISTS solicitudes (
   PRIMARY KEY (id),
   UNIQUE KEY uq_solicitudes_folio (folio),
   KEY ix_solicitudes_fecha_bus (fecha_salida, bus_id),
+  KEY ix_solicitudes_organizacion_fecha (organizacion_id, fecha_salida),
+  KEY ix_solicitudes_estado_fecha (estado, fecha_salida),
   CONSTRAINT fk_solicitudes_organizacion
     FOREIGN KEY (organizacion_id) REFERENCES organizaciones (id),
   CONSTRAINT fk_solicitudes_dirigente
     FOREIGN KEY (dirigente_id) REFERENCES usuarios (id),
   CONSTRAINT fk_solicitudes_bus
     FOREIGN KEY (bus_id) REFERENCES buses (id)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS pasajeros (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -82,7 +90,7 @@ CREATE TABLE IF NOT EXISTS pasajeros (
   CONSTRAINT fk_pasajeros_solicitud
     FOREIGN KEY (solicitud_id) REFERENCES solicitudes (id)
     ON DELETE CASCADE
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS decretos (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -96,11 +104,12 @@ CREATE TABLE IF NOT EXISTS decretos (
   observacion TEXT NULL,
   PRIMARY KEY (id),
   UNIQUE KEY uq_decretos_solicitud (solicitud_id),
+  KEY ix_decretos_estado (estado),
   CONSTRAINT fk_decretos_solicitud
     FOREIGN KEY (solicitud_id) REFERENCES solicitudes (id),
   CONSTRAINT fk_decretos_firmante
     FOREIGN KEY (firmante_id) REFERENCES usuarios (id)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS historial_estados (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -111,11 +120,12 @@ CREATE TABLE IF NOT EXISTS historial_estados (
   comentario TEXT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
+  KEY ix_historial_solicitud_fecha (solicitud_id, created_at),
   CONSTRAINT fk_historial_solicitud
     FOREIGN KEY (solicitud_id) REFERENCES solicitudes (id),
   CONSTRAINT fk_historial_usuario
     FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS notificaciones (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -126,8 +136,9 @@ CREATE TABLE IF NOT EXISTS notificaciones (
   leida TINYINT(1) NOT NULL DEFAULT 0,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
+  KEY ix_notificaciones_usuario_leida_fecha (usuario_id, leida, created_at),
   CONSTRAINT fk_notificaciones_usuario
     FOREIGN KEY (usuario_id) REFERENCES usuarios (id),
   CONSTRAINT fk_notificaciones_solicitud
     FOREIGN KEY (solicitud_id) REFERENCES solicitudes (id)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

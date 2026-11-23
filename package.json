@@ -6,7 +6,8 @@
   "main": "server/app.js",
   "scripts": {
     "start": "node server/app.js",
-    "dev": "nodemon server/app.js"
+    "dev": "nodemon server/app.js",
+    "seed": "node database/seed.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
