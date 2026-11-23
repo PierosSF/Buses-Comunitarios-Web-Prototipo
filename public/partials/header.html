@@ -1,3 +1,135 @@
-<header>
-  <a href="/">Municipalidad de Padre Las Casas</a>
+<header class="municipal-header">
+  <a class="skip-link" href="#contenido-principal">Saltar al contenido</a>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <nav aria-label="Enlaces de transparencia">
+        <ul class="top-links">
+          <li>
+            <a href="#">
+              <span class="top-link-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h8M8 17h4"/></svg>
+              </span>
+              <span>Transparencia Activa <span class="top-link-note">/ Ley de Transparencia</span></span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <span class="top-link-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="m5 7 7 6 7-6M8 17h8"/></svg>
+              </span>
+              <span>Solicitar Información <span class="top-link-note">/ Ley de Transparencia</span></span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <span class="top-link-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M3 10 12 4l9 6"/><path d="M5 10v9h14v-9M9 19v-6h6v6"/></svg>
+              </span>
+              <span>Ley 19.418 <span class="top-link-note">/ Organizaciones Comunitarias</span></span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <span class="top-link-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20a7 7 0 0 1 14 0M18 5h3v3"/></svg>
+              </span>
+              <span>Plataforma Ley del Lobby</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="utility-links" role="group" aria-label="Contacto y acceso">
+        <a href="tel:+56452590400">
+          <span class="utility-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M7 3H4a1 1 0 0 0-1 1c0 9.4 7.6 17 17 17a1 1 0 0 0 1-1v-3l-5-2-2 3a15 15 0 0 1-8-8l3-2z"/></svg>
+          </span>
+          <span>Teléfono</span>
+        </a>
+        <a href="mailto:oirs@padrelascasas.cl">
+          <span class="utility-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="m4 7 8 6 8-6"/></svg>
+          </span>
+          <span>Correo</span>
+        </a>
+        <a href="/login.html" data-sign-in>
+          <span class="utility-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>
+          </span>
+          <span>Iniciar sesión</span>
+        </a>
+        <div class="session-area" data-session-area hidden>
+          <span class="session-person">
+            <strong data-session-name></strong>
+            <span data-session-role></span>
+          </span>
+          <button class="notification-button" type="button" aria-label="Notificaciones" data-notifications>
+            <span class="notification-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+            </span>
+            <span class="notification-count" data-notification-count hidden></span>
+          </button>
+          <button type="button" data-logout>Cerrar sesión</button>
+        </div>
+        <button
+          class="accessibility-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="plc-accessibility-panel"
+          aria-label="Abrir opciones de accesibilidad"
+          data-accessibility-toggle
+        >Aa</button>
+      </div>
+    </div>
+  </div>
+
+  <section
+    class="accessibility-panel"
+    id="plc-accessibility-panel"
+    aria-labelledby="accessibility-title"
+    data-accessibility-panel
+    hidden
+  >
+    <h2 id="accessibility-title">Accesibilidad</h2>
+    <div class="accessibility-controls" role="group" aria-label="Tamaño del texto y contraste">
+      <button type="button" aria-label="Reducir tamaño del texto" data-font-action="decrease">A−</button>
+      <button type="button" aria-label="Restablecer tamaño del texto" data-font-action="reset">A</button>
+      <button type="button" aria-label="Aumentar tamaño del texto" data-font-action="increase">A+</button>
+      <button type="button" aria-pressed="false" data-high-contrast>Contraste alto</button>
+    </div>
+    <p class="accessibility-status" aria-live="polite" data-accessibility-status></p>
+  </section>
+
+  <div class="mainbar">
+    <div class="mainbar-inner">
+      <a class="municipal-brand" href="/" aria-label="Ir al inicio de Padre Las Casas">
+        <img src="/img/logo-plc.png" alt="Municipalidad de Padre Las Casas">
+      </a>
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="municipal-nav"
+        data-menu-toggle
+      >
+        <span class="menu-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </span>
+        <span data-menu-label>Menú</span>
+      </button>
+      <nav class="primary-nav" id="municipal-nav" aria-label="Menú principal" data-primary-nav>
+        <ul>
+          <li><a href="#" data-nav="comuna">COMUNA</a></li>
+          <li><a href="#" data-nav="municipio">MUNICIPIO</a></li>
+          <li><a href="#" data-nav="direcciones">DIRECCIONES</a></li>
+          <li><a href="/index.html" data-nav="servicios">SERVICIOS</a></li>
+        </ul>
+      </nav>
+      <p class="emergency-phone">
+        FONO EMERGENCIAS
+        <a href="tel:+56452590400">452 590400</a>
+      </p>
+    </div>
+  </div>
+  <div class="green-stripe" aria-hidden="true"></div>
 </header>

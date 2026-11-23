@@ -1,1 +1,285 @@
 'use strict';
+
+const escalasDeTexto = [100, 112.5, 125, 150];
+const claveEscala = 'plc-fontscale';
+const claveContraste = 'plc-high-contrast';
+
+function copiarNodosParciales(contenedor, contenido) {
+  const documentoParcial = new DOMParser().parseFromString(contenido, 'text/html');
+  const nodos = Array.from(documentoParcial.body.childNodes)
+    .map((nodo) => document.importNode(nodo, true));
+
+  if (nodos.length === 0) {
+    throw new Error('El parcial recibido no contiene elementos.');
+  }
+
+  contenedor.replaceChildren(...nodos);
+  contenedor.setAttribute('aria-busy', 'false');
+}
+
+async function cargarParcial(selector, ruta, mensajeError) {
+  const contenedor = document.querySelector(selector);
+
+  if (!contenedor) {
+    return;
+  }
+
+  try {
+    const respuesta = await fetch(ruta);
+
+    if (!respuesta.ok) {
+      throw new Error(`No se pudo cargar ${ruta}: ${respuesta.status}`);
+    }
+
+    copiarNodosParciales(contenedor, await respuesta.text());
+  } catch (error) {
+    console.error(error);
+    contenedor.textContent = mensajeError;
+    contenedor.setAttribute('aria-busy', 'false');
+  }
+}
+
+function leerPreferencia(clave) {
+  try {
+    return window.localStorage.getItem(clave);
+  } catch (error) {
+    console.error(`No se pudo leer la preferencia ${clave}.`, error);
+    return null;
+  }
+}
+
+function guardarPreferencia(clave, valor, estado) {
+  try {
+    window.localStorage.setItem(clave, valor);
+    return true;
+  } catch (error) {
+    console.error(`No se pudo guardar la preferencia ${clave}.`, error);
+    estado.textContent = 'No se pudo guardar esta preferencia en este navegador.';
+    return false;
+  }
+}
+
+function prepararAccesibilidad() {
+  const botonAbrir = document.querySelector('[data-accessibility-toggle]');
+  const panel = document.querySelector('[data-accessibility-panel]');
+
+  if (!botonAbrir || !panel) {
+    return;
+  }
+
+  const estado = panel.querySelector('[data-accessibility-status]');
+  const escalaGuardada = Number(leerPreferencia(claveEscala));
+  let escalaActual = escalasDeTexto.includes(escalaGuardada) ? escalaGuardada : 100;
+
+  function aplicarEscala(escala, guardar) {
+    escalaActual = escala;
+    document.documentElement.style.fontSize = `${escalaActual}%`;
+    estado.textContent = `Tamaño del texto: ${escalaActual}%.`;
+
+    if (guardar) {
+      guardarPreferencia(claveEscala, String(escalaActual), estado);
+    }
+  }
+
+  aplicarEscala(escalaActual, false);
+
+  const contrasteGuardado = leerPreferencia(claveContraste) === 'true';
+  const botonContraste = panel.querySelector('[data-high-contrast]');
+
+  function aplicarContraste(activar, guardar) {
+    document.documentElement.classList.toggle('high-contrast', activar);
+    botonContraste.setAttribute('aria-pressed', String(activar));
+
+    if (guardar) {
+      estado.textContent = activar ? 'Contraste alto activado.' : 'Contraste alto desactivado.';
+      guardarPreferencia(claveContraste, String(activar), estado);
+    }
+  }
+
+  aplicarContraste(contrasteGuardado, false);
+
+  botonAbrir.addEventListener('click', () => {
+    const estaAbierto = botonAbrir.getAttribute('aria-expanded') === 'true';
+    botonAbrir.setAttribute('aria-expanded', String(!estaAbierto));
+    botonAbrir.setAttribute(
+      'aria-label',
+      estaAbierto ? 'Abrir opciones de accesibilidad' : 'Cerrar opciones de accesibilidad'
+    );
+    panel.hidden = estaAbierto;
+
+    if (!estaAbierto) {
+      panel.querySelector('[data-font-action="decrease"]').focus();
+    }
+  });
+
+  panel.addEventListener('click', (evento) => {
+    const boton = evento.target.closest('button');
+
+    if (!boton || !panel.contains(boton)) {
+      return;
+    }
+
+    const accion = boton.dataset.fontAction;
+
+    if (accion === 'reset') {
+      aplicarEscala(100, true);
+    } else if (accion === 'increase' || accion === 'decrease') {
+      const direccion = accion === 'increase' ? 1 : -1;
+      const indiceActual = escalasDeTexto.indexOf(escalaActual);
+      const indiceNuevo = Math.max(
+        0,
+        Math.min(escalasDeTexto.length - 1, indiceActual + direccion)
+      );
+      aplicarEscala(escalasDeTexto[indiceNuevo], true);
+    } else if (boton.matches('[data-high-contrast]')) {
+      aplicarContraste(boton.getAttribute('aria-pressed') !== 'true', true);
+    }
+  });
+
+  document.addEventListener('keydown', (evento) => {
+    if (evento.key === 'Escape' && !panel.hidden) {
+      panel.hidden = true;
+      botonAbrir.setAttribute('aria-expanded', 'false');
+      botonAbrir.setAttribute('aria-label', 'Abrir opciones de accesibilidad');
+      botonAbrir.focus();
+    }
+  });
+}
+
+function marcarEnlaceActivo() {
+  const seccionActual = document.body.dataset.navActive;
+
+  if (!seccionActual) {
+    return;
+  }
+
+  document.querySelectorAll('[data-nav]').forEach((enlace) => {
+    const activo = enlace.dataset.nav === seccionActual;
+    enlace.classList.toggle('is-active', activo);
+
+    if (activo) {
+      enlace.setAttribute('aria-current', 'page');
+    } else {
+      enlace.removeAttribute('aria-current');
+    }
+  });
+}
+
+function prepararMenuMovil() {
+  const boton = document.querySelector('[data-menu-toggle]');
+  const menu = document.querySelector('[data-primary-nav]');
+  const etiqueta = document.querySelector('[data-menu-label]');
+
+  if (!boton || !menu) {
+    return;
+  }
+
+  function cerrarMenu() {
+    menu.classList.remove('is-open');
+    boton.setAttribute('aria-expanded', 'false');
+    if (etiqueta) {
+      etiqueta.textContent = 'Menú';
+    }
+  }
+
+  boton.addEventListener('click', () => {
+    const abrir = boton.getAttribute('aria-expanded') !== 'true';
+    menu.classList.toggle('is-open', abrir);
+    boton.setAttribute('aria-expanded', String(abrir));
+    if (etiqueta) {
+      etiqueta.textContent = abrir ? 'Cerrar' : 'Menú';
+    }
+  });
+
+  menu.addEventListener('click', (evento) => {
+    if (evento.target.closest('a')) {
+      cerrarMenu();
+    }
+  });
+
+  document.addEventListener('keydown', (evento) => {
+    if (evento.key === 'Escape' && menu.classList.contains('is-open')) {
+      cerrarMenu();
+      boton.focus();
+    }
+  });
+}
+
+function mostrarUsuario(usuario) {
+  const area = document.querySelector('[data-session-area]');
+  const enlaceIngreso = document.querySelector('[data-sign-in]');
+
+  if (!area || !enlaceIngreso) {
+    return;
+  }
+
+  if (!usuario || typeof usuario.nombre !== 'string' || typeof usuario.rol !== 'string') {
+    area.hidden = true;
+    enlaceIngreso.hidden = false;
+    return;
+  }
+
+  const nombresDeRol = {
+    dirigente: 'Dirigente',
+    dideco: 'DIDECO',
+    administrador: 'Administrador municipal'
+  };
+  area.querySelector('[data-session-name]').textContent = usuario.nombre;
+  area.querySelector('[data-session-role]').textContent =
+    nombresDeRol[usuario.rol] || usuario.rol;
+  area.hidden = false;
+  enlaceIngreso.hidden = true;
+}
+
+function prepararAccionesDeSesion() {
+  mostrarUsuario(window.plcUsuarioActual);
+
+  document.addEventListener('plc:sesion-iniciada', (evento) => {
+    mostrarUsuario(evento.detail);
+  });
+
+  document.addEventListener('plc:sesion-cerrada', () => {
+    mostrarUsuario(null);
+  });
+
+  const botonCerrar = document.querySelector('[data-logout]');
+  const botonNotificaciones = document.querySelector('[data-notifications]');
+
+  if (botonCerrar) {
+    botonCerrar.addEventListener('click', () => {
+      document.dispatchEvent(new CustomEvent('plc:solicitar-cierre-sesion'));
+    });
+  }
+
+  if (botonNotificaciones) {
+    botonNotificaciones.addEventListener('click', () => {
+      document.dispatchEvent(new CustomEvent('plc:abrir-notificaciones'));
+    });
+  }
+}
+
+async function prepararLayout() {
+  await Promise.all([
+    cargarParcial(
+      '[data-layout-header]',
+      '/partials/header.html',
+      'No fue posible cargar el encabezado municipal.'
+    ),
+    cargarParcial(
+      '[data-layout-footer]',
+      '/partials/footer.html',
+      'No fue posible cargar el pie de página municipal.'
+    )
+  ]);
+
+  marcarEnlaceActivo();
+  prepararAccesibilidad();
+  prepararMenuMovil();
+  prepararAccionesDeSesion();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', prepararLayout);
+} else {
+  prepararLayout();
+}

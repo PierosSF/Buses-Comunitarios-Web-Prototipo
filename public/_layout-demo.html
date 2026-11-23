@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prueba de accesibilidad y diseño | Buses Comunitarios</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <script src="/js/layout.js" defer></script>
+</head>
+<body id="top" data-nav-active="servicios">
+  <div data-layout-header aria-busy="true"></div>
+  <main id="contenido-principal" tabindex="-1">
+    <h1>Prueba de accesibilidad</h1>
+    <p>
+      Use el botón Aa del encabezado y aumente el texto hasta 150%. Revise también el menú
+      en pantalla angosta y desplace la tabla horizontalmente si lo necesita.
+    </p>
+    <div class="table-responsive" role="region" aria-label="Tabla de prueba adaptable" tabindex="0">
+      <table>
+        <caption>Solicitudes de demostración a escala ampliada</caption>
+        <thead>
+          <tr>
+            <th scope="col">Organización comunitaria</th>
+            <th scope="col">Destino de la salida</th>
+            <th scope="col">Estado de la solicitud</th>
+            <th scope="col">Fecha de salida</th>
+            <th scope="col">Observación de DIDECO</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Club de Adulto Mayor Las Araucarias</td>
+            <td>Centro Cultural de Padre Las Casas</td>
+            <td>En revisión</td>
+            <td>23-12-2026</td>
+            <td>La nómina está siendo revisada por el equipo municipal.</td>
+          </tr>
+          <tr>
+            <td>Junta de Vecinos Nuevo Amanecer</td>
+            <td>Temuco</td>
+            <td>Bus asignado</td>
+            <td>28-12-2026</td>
+            <td>El decreto de circulación está pendiente de firma.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+  <div data-layout-footer aria-busy="true"></div>
+</body>
+</html>

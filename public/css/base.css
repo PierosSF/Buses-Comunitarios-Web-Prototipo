@@ -9,22 +9,78 @@
   --ink: #232629;
   --mute: #62676b;
   --line: #e0e0dd;
+  --ok: #287b36;
+  --ok-soft: #e8f4e9;
+  --warn: #8a5a00;
+  --warn-soft: #fff3d4;
+  --err: #a52525;
+  --err-soft: #fdeaea;
   font-family: Arial, Helvetica, sans-serif;
   color: var(--ink);
   background: var(--bg);
+  font-size: 100%;
+  line-height: 1.5;
+  scroll-behavior: smooth;
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
+  background: var(--bg);
+  color: var(--ink);
   font-size: 1rem;
   line-height: 1.5;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  color: inherit;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+[hidden] {
+  display: none !important;
 }
 
 :focus-visible {
   outline: 0.1875rem solid var(--plc-celeste);
   outline-offset: 0.125rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
